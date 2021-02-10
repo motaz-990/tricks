@@ -2,6 +2,8 @@ from cards import cards
 from Player import Player
 import random
 
+#rename to trianing tricks
+
 print('welcom to Tricks')
 
 deck = cards()
@@ -55,8 +57,8 @@ def deal_cards(players, cards):
 
 
 def choose_game():
-    game = temp_players[0].choose_game()
-    for i in range(len(temp_players) - 1):
+    game = 'tricks'
+    for i in range(len(temp_players)):
         temp_players[i].set_game(game)
 
 
@@ -83,15 +85,15 @@ def play():
 
 
 def update_score(trick_winner, trick):
+
     trick_winner.update_score(trick)
+
 
     # subscores[i] =players[i].get_subscore()
     # scores[i]+= subscores[i]
 
 
 def end_subgame():
-    subscores = [0, 0, 0, 0]
-    scores = [0, 0, 0, 0]
     for i in range(len(players)):
         subscores[i] = players[i].get_subscore()
         scores[i] = players[i].get_score()
@@ -109,7 +111,7 @@ def end_subgame():
         print('------------------')
         b = input('#############kingdom finished#######################')
         print('------------')
-    return scores
+    return True
 
 
 def trick_winner(cards_played):
@@ -132,13 +134,14 @@ while not end_game:
         deal_cards(players, new_deck)
         print('#################cards dealt################')
         new_subgame = False
+
         if first_game:
             players_order = play_order(players, 0)
             temp_players = play_order(players, 0)
             first_game = False
 
         choose_game()
-        print('################game has been choosen to be: ', players[0].game, '#########################')
+        print('################game has been choosen to be: ',players[0].game ,'#########################')
 
     else:
         print('--------------')
@@ -148,8 +151,7 @@ while not end_game:
         print('---------------')
 
         if len(players_order[-1].hand) == 11:
-            scores = end_subgame()
-            new_subgame = True
+            new_subgame = end_subgame()
             games_left -= 1
             end_game = games_left == 0
 
