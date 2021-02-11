@@ -1,5 +1,5 @@
 from cards import cards
-from Player import Player
+from trained_player_tricks import trained_player_tricks
 import random
 
 #rename to trianing tricks
@@ -10,13 +10,13 @@ deck = cards()
 
 # def __init__(self, name, score, hand, game,human):
 
-player = Player('Motaz', True)
-ai1 = Player('ai1', False)
-ai2 = Player('ai2', False)
-ai3 = Player('ai3', False)
+player = trained_player_tricks('Motaz', True)
+ai1 = trained_player_tricks('ai1', False)
+ai2 = trained_player_tricks('ai2', False)
+ai3 = trained_player_tricks('ai3', False)
 players = [player, ai1, ai2, ai3]
 temp_players = [player, ai1, ai2, ai3]
-players_order = []
+players_order = players
 
 end_game = False
 first_game = True
@@ -30,18 +30,18 @@ scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
 
-diamondBroken = False
 
 
+'''
 def first_kingdom(players):
     for i in range(len(players)):
         if players[i].has_seven_hearts():
             return i
-
+'''
 
 def play_order(players, first_player):
-    if first_game:
-        first_player = first_kingdom(players)
+    #if first_game:
+     #   first_player = first_kingdom(players)
 
     ordered = []
 
@@ -55,27 +55,18 @@ def deal_cards(players, cards):
     for i in players:
         i.receive_cards(cards)
 
-
+'''
 def choose_game():
     game = 'tricks'
     for i in range(len(temp_players)):
         temp_players[i].set_game(game)
-
-
-'''
-def trick_winner(cards):
-    suit = cards[0][1][0]
-    winner , winner_card = 0, cards[0][1]
-    for i in range (1,len(cards)):
-        if cards[i][1][0] == suit:
-
-            if int(cards[i][1][1]>int(winner_card[1])):
-                winner_card = cards[i][1][1]
 '''
 
 
 def play():
+
     cards_played = []
+
     for i in range(len(players_order)):
         cards_played.append((players_order[i].name, players_order[i].play(cards_played)))
         print(cards_played[i][0], 'played', cards_played[i][1])
@@ -89,9 +80,6 @@ def update_score(trick_winner, trick):
     trick_winner.update_score(trick)
 
 
-    # subscores[i] =players[i].get_subscore()
-    # scores[i]+= subscores[i]
-
 
 def end_subgame():
     for i in range(len(players)):
@@ -99,13 +87,7 @@ def end_subgame():
         scores[i] = players[i].get_score()
     print('subscores: ', subscores)
     print('scores: ', scores)
-    '''
-    update_score()
-    print('score in this round: ',players[0].name,', ',players[1].name,', ',players[2].name,', ',players[3].name)
-    print('score in this round: ',subscores[0],', ',subscores[0],', ',subscores[0],', ', subscores[0])
-    print('overall score: ',players[0].name,', ',players[1].name,', ',players[2].name,', ',players[3].name)
-    print('overall score: ',subscores[0],', ',subscores[0],', ',subscores[0],', ', subscores[0])
-    '''
+
     if len(temp_players[0].games) == 0:
         temp_players.append(temp_players.pop(0))
         print('------------------')
@@ -126,22 +108,16 @@ def trick_winner(cards_played):
     print('winner is : ', cards_played[winner])
     return winner
 
-
+counter = 1
 while not end_game:
 
     if new_subgame:
         new_deck = deck.get_deck()
         deal_cards(players, new_deck)
-        print('#################cards dealt################')
+        print('################# start of game number : ',counter,'################')
+        counter+=1
         new_subgame = False
-
-        if first_game:
-            players_order = play_order(players, 0)
-            temp_players = play_order(players, 0)
-            first_game = False
-
-        choose_game()
-        print('################game has been choosen to be: ',players[0].game ,'#########################')
+        players_order = play_order(players_order, random.randrange(4))
 
     else:
         print('--------------')
