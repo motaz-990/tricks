@@ -14,13 +14,17 @@ class cards:
     def get_deck(self):
 
         for i in range(4):
-            for j in range(2):
+            for j in range(5):
                 self.Cards.append((self.suits[i], self.ranksNames[j]))
         random.shuffle(self.Cards)
         return self.Cards
 
     def get_rank (self,card):
         return self.ranks[card]
+
+    def get_rank_name(self,rank):
+        return self.ranksNames[rank-1]
+
 
 
 

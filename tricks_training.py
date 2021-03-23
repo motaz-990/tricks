@@ -74,7 +74,7 @@ def play():
     for i in range(len(players_order)):
         cards_played.append((players_order[i].name, players_order[i].play(cards_played,order_of_play)))
         #print('((((((((((((((((((((((((((((( end play )))))))))))))))))))))))))))))))))))))))')
-        print(cards_played)
+        #print(cards_played)
         print(cards_played[i][0], 'played', cards_played[i][1])
     # trick_winner(cards_played)
 
@@ -85,6 +85,8 @@ def play():
         print('player: ', order_of_play[i])
         print('players_order[i].my_turn(order_of_play) : ', players_order[i].my_turn(order_of_play))
         '''
+        if order_of_play[i] == 'Motaz':
+            players_order[i].analyse_trick(cards_played)
         players_order[i].cards_played(cards_played,False,players_order[i].my_turn(order_of_play))
     return cards_played
 
