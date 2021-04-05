@@ -17,6 +17,7 @@ ai3 = trained_player_tricks('ai3', False)
 players = [player, ai1, ai2, ai3]
 temp_players = [player, ai1, ai2, ai3]
 players_order = players
+order_of_play = ['Motaz','ai1','ai2','ai3']
 
 end_game = False
 first_game = True
@@ -24,8 +25,8 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 20
-sub_games_left = 20
+games_left = 1
+sub_games_left = 1
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
@@ -39,16 +40,19 @@ def first_kingdom(players):
             return i
 '''
 
-def play_order(players, first_player):
+def play_order(players,order_of_play ,first_player):
     #if first_game:
      #   first_player = first_kingdom(players)
 
-    ordered = []
+    ordered_players = []
+    ordered_names = []
 
     for i in range(len(players)):
-        ordered += [players[first_player % len(players)]]
+        ordered_players += [players[first_player % len(players)]]
+        ordered_names += [order_of_play[first_player % len(players)]]
         first_player += 1
-    return ordered
+
+    return ordered_players,ordered_names
 
 
 def deal_cards(players, cards):
@@ -68,15 +72,30 @@ def play():
     cards_played = []
 
     for i in range(len(players_order)):
-        cards_played.append((players_order[i].name, players_order[i].play(cards_played)))
+        cards_played.append((players_order[i].name, players_order[i].play(cards_played,order_of_play)))
+        #print('((((((((((((((((((((((((((((( end play )))))))))))))))))))))))))))))))))))))))')
+        #print(cards_played)
         print(cards_played[i][0], 'played', cards_played[i][1])
     # trick_winner(cards_played)
 
-    return cards_played
+    for i in range(len(players_order)):
+        '''
+        print('((((((((((((((((((((((((((((( end play )))))))))))))))))))))))))))))))))))))))')
+        print('cards played: ', cards_played)
+        print('player: ', order_of_play[i])
+        print('players_order[i].my_turn(order_of_play) : ', players_order[i].my_turn(order_of_play))
+        '''
+        players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
+    print('$$$$$$$ cards played $$$$$$$$$$$ : ',cards_played)
+    winner = trick_winner(cards_played)
+    players[0].analyse_trick(cards_played,cards_played[winner][0])
+    players[0].number_of_cards()
+
+
+    return cards_played,winner
 
 
 def update_score(trick_winner, trick):
-
     trick_winner.update_score(trick)
 
 
@@ -109,6 +128,9 @@ def trick_winner(cards_played):
     return winner
 
 counter = 1
+
+
+
 while not end_game:
 
     if new_subgame:
@@ -117,16 +139,24 @@ while not end_game:
         print('################# start of game number : ',counter,'################')
         counter+=1
         new_subgame = False
-        players_order = play_order(players_order, random.randrange(4))
+
+        players_order,order_of_play = play_order(players_order,order_of_play, random.randrange(4))
+
+
 
     else:
         print('--------------')
-        cards_played = play()
-        players_order = play_order(players_order, trick_winner((cards_played)))
+        #print('players order: ', players_order)
+        cards_played, winner = play()
+        #print('players order: ', players_order)
+        players_order, order_of_play = play_order(players_order, order_of_play,winner)
+        print('^^^^^^^^^^^^^^^^^^^^ end play ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+        #print('players order: ', players_order)
         update_score(players_order[0], cards_played)
+        #print('^^^^^^^^^^^^^^^^^^^^ end update score ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
         print('---------------')
 
-        if len(players_order[-1].hand) == 11:
+        if len(players_order[-1].hand) == 0:
             new_subgame = end_subgame()
             games_left -= 1
             end_game = games_left == 0
@@ -136,3 +166,9 @@ while not end_game:
         print('the winner is: ', winner)
         print("would you like to play another game?")
 
+
+
+
+'''
+
+'''
