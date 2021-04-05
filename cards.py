@@ -14,7 +14,7 @@ class cards:
     def get_deck(self):
 
         for i in range(4):
-            for j in range(5):
+            for j in range(13):
                 self.Cards.append((self.suits[i], self.ranksNames[j]))
         random.shuffle(self.Cards)
         return self.Cards

@@ -85,10 +85,14 @@ def play():
         print('player: ', order_of_play[i])
         print('players_order[i].my_turn(order_of_play) : ', players_order[i].my_turn(order_of_play))
         '''
-        if order_of_play[i] == 'Motaz':
-            players_order[i].analyse_trick(cards_played)
-        players_order[i].cards_played(cards_played,False,players_order[i].my_turn(order_of_play))
-    return cards_played
+        players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
+    print('$$$$$$$ cards played $$$$$$$$$$$ : ',cards_played)
+    winner = trick_winner(cards_played)
+    players[0].analyse_trick(cards_played,cards_played[winner][0])
+    players[0].number_of_cards()
+
+
+    return cards_played,winner
 
 
 def update_score(trick_winner, trick):
@@ -143,9 +147,9 @@ while not end_game:
     else:
         print('--------------')
         #print('players order: ', players_order)
-        cards_played = play()
+        cards_played, winner = play()
         #print('players order: ', players_order)
-        players_order, order_of_play = play_order(players_order, order_of_play,trick_winner((cards_played)))
+        players_order, order_of_play = play_order(players_order, order_of_play,winner)
         print('^^^^^^^^^^^^^^^^^^^^ end play ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
         #print('players order: ', players_order)
         update_score(players_order[0], cards_played)
