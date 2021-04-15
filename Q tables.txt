@@ -1,0 +1,13 @@
+################# start of game number  1 ################ 
+first end: 25, 13, 24, 11, 23, 18, 0, 0, 5, 15, 0, 0, 22, 4, 17, 0, 23, 22, 
+first mid: 8, 26, 21, 12, 22, 17, 19, 23, 14, 16, 18, 26, 34, 35, 15, 8, 15, 26, 
+first start: 11, 18, 22, 9, 12, 20, 15, 14, 23, 9, 8, 18, 24, 29, 18, 25, 40, 7, 
+second yes majority less: 12, 24, 12, 
+second yes majority high: 34, 39, 40, 
+second no: 44, 45, 38, 
+third yes majority less: 33, 22, 22, 
+third yes majority high: 14, 44, 17, 
+third no: 10, 39, 40, 
+fourth yes majority less: 30, 37, 42, 
+fourth yes majority high: 13, 41, 43, 
+fourth no: 37, 29, 23, 

@@ -39,18 +39,18 @@ class trained_player_tricks:
                             2: {True:{True:'second yes majority less',False:'second yes majority high'}, False: 'second no'},
                             3: {True:{True:'third yes majority less',False:'third yes majority high'}, False: 'third no'},
                             4: {True:{True:'fourth yes majority less',False:'fourth yes majority high'}, False: 'fourth no'}}
-        self.states_list = {'first start':0,'first mid':1,'first end':2,'second yes majority less':3,'second yes majority high':4,
-                            'second no':5,'third yes majority less':6,'third yes majority high':7,'third no':8,
-                            'fourth yes majority less':9,'fourth yes majority high':10,'fourth no':11}
+        self.states_list = ['first end','first mid','first start','second yes majority less','second yes majority high',
+                            'second no','third yes majority less','third yes majority high','third no',
+                            'fourth yes majority less','fourth yes majority high','fourth no']
         self.state_space_length = 12
         #actions: 'low_card', 'mid_card','high_card'
         self.action_space =['low_card','mid_card' ,'high_card']
-        self.action_space_first = ['first few strong low_card','first few strong mid_card','first few strong high_card',
-                                   'first few weak low_card','first few weak mid_card','first few weak high_card',
-                                   'first mid strong low_card','first mid strong mid_card','first mid strong high_card',
-                                   'first mid weak low_card','first mid weak mid_card','first mid weak high_card',
-                                   'first lot strong low_card','first lot strong mid_card','first lot strong high_card',
-                                   'first lot weak low_card','first lot weak mid_card','first lot weak high_card']
+        self.action_space_first = ['few strong low_card','few strong mid_card','few strong high_card',
+                                   'few weak low_card','few weak mid_card','few weak high_card',
+                                   'mid strong low_card','mid strong mid_card','mid strong high_card',
+                                   'mid weak low_card','mid weak mid_card','mid weak high_card',
+                                   'lot strong low_card','lot strong mid_card','lot strong high_card',
+                                   'lot weak low_card','lot weak mid_card','lot weak high_card']
         if self.name == 'Motaz':
             self.Q_table= self.create_Q_table()
         self.random_action = 90
@@ -843,12 +843,12 @@ class trained_player_tricks:
         print('state: ',state)
         print('action',action)
         print('Q table: ',self.Q_table)
-        print('state before: ', self.Q_table[self.states_list.get(state)][action])
-        if self.Q_table[self.states_list.get(state)][action] == 0:
-            self.Q_table[self.states_list.get(state)][action] = reward
+        print('state before: ', self.Q_table[self.states_list.index(state)][action])
+        if self.Q_table[self.states_list.index(state)][action] == 0:
+            self.Q_table[self.states_list.index(state)][action] = reward
         else:
-            self.Q_table[self.states_list.get(state)][action] += reward - self.Q_table[self.states_list.get(state)][action]
-        print('updated state: ', self.Q_table[self.states_list.get(state)][action])
+            self.Q_table[self.states_list.index(state)][action] += reward - self.Q_table[self.states_list.index(state)][action]
+        print('updated state: ', self.Q_table[self.states_list.index(state)][action])
 
 
     def moves_ahead(self):
@@ -1199,32 +1199,69 @@ class trained_player_tricks:
             '''
         return sum(future_rewards)/len(future_rewards)
 
-    def learned_Q_table(self):
-        pass
+    def rewards_to_string(self,actions):
+        rewards_string = ''
+        for i in actions:
+            rewards_string+= str(i)+', '
+        #print(rewards_string)
+        return rewards_string
+
+    def extract_rewards(self,reward):
+        return reward[-1]
+
+    def preprocess(self,content):
+
+        preprocessed = []
+        for i in range(1,len(content)):
+            preprocessed.append(content[i][content[i].index(':') + 1:])
+        return (preprocessed)
 
 
+    def merge_table(self,table):
+        for i in range(len(self.Q_table)):
+            for j in range(len(self.Q_table[i])):
+                self.Q_table[i][j] = self.Q_table[i][j]+table[i][j]
+
+    def read_Q_table(self):
+        #print('read table')
+        #print()
+        f = open("Q tables.txt", "r")
+        content = self.preprocess(f.readlines())
+        #print('finished preprocessing')
+        #print('after',content)
+        for i in range(len(content)):
+            content_list = content[i].split(",")
+            #print(content_list)
+            content_list.pop(len(content_list)-1)
+            for j in range(len(content_list)):
+                content_list[j]=(int(content_list[j]))
+
+            content[i]=content_list
+
+        print('########## content list ############# ',content)
+        #print(content_list)
+
+        f.close()
+        return content
+
+    def learned_Q_table(self,first_line):
+
+        print('########## content list ############# ', self.Q_table)
+        new_table = self.read_Q_table().copy()
+        self.merge_table(new_table)
+        print('########## content list ############# ', self.Q_table)
+
+        f = open("Q tables.txt", "w")
+        f.write(first_line)
+        for i in range(len(self.states_list)):
+            line_to_write = self.states_list[i]+': '+self.rewards_to_string(self.Q_table[i])
+            line_to_write += '\n'
+            f.write(line_to_write)
+        f.close()
+
+        # open and read the file after the appending:
 
 
+        #print(f.read())
 
 
-
-
-
-'''
- print('^^^^^^^^^^^ first ^^^^^^^^^^^^^^^^^^^^^')
-        print('action: ',action)
-        print(self.action_space_first[action])
-
-        number_of_cards_action = int((action-1)/6)
-        print('my hand before: ',allowed_cards)
-        suits_count = self.count_suits(allowed_cards)
-        allowed_cards = self.choose_suit(allowed_cards, number_of_cards_action, suits_count)
-        print('my hand after: ',allowed_cards)
-        strong = int(action/3)%2==0
-        print('cards action: ',number_of_cards_action,'   strong: ',strong,'   rank: ',action%3)
-        if strong == self.evaluate_suit(allowed_cards):
-            return action,self.perform_action([],allowed_cards,action % 3,True)
-        else:
-            action = action+3
-            return action,self.perform_action([],allowed_cards,action % 3,True)
-            '''

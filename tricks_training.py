@@ -136,7 +136,8 @@ while not end_game:
     if new_subgame:
         new_deck = deck.get_deck()
         deal_cards(players, new_deck)
-        print('################# start of game number : ',counter,'################')
+        start_of_the_game = '################# start of game number  '+ str(counter)+ ' ################ \n'
+        print(start_of_the_game)
         counter+=1
         new_subgame = False
 
@@ -165,4 +166,5 @@ while not end_game:
         winner = players[scores.index(max(scores))].name
         print('the winner is: ', winner)
         print("would you like to play another game?")
+        player.learned_Q_table(start_of_the_game)
 
