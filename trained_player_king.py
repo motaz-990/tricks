@@ -3,7 +3,7 @@ import copy
 import random
 
 
-class trained_player_queens:
+class trained_player_king:
 
     def __init__(self, name, trained):
         # games = ["tricks", "diamonds", "queens", "king", "jack"]
@@ -32,9 +32,12 @@ class trained_player_queens:
         self.temp = True
         self.game = 'diamonds'
         self.trained = trained
-        self.queens = []
-        self.strong = []
+        self.have_king = False
+        self.strong = True
+        self.len_heart = 0
         self.advantages = []
+        #with king .. strong in heart .. have vulnerablity .. hav advantage
+        #without king .. weak in heart .. strong on every suit but heart .. does not have advantage
         self.state_space = {1: {True: {True: {True:{True:'first with strong vulnerable advantage',False:'first with strong vulnerable disadvantage'},
                                             False:{True:'first with strong covered advantage',False:'first with strong covered disadvantage'}},
                                        False:{True:{True:'first with weak vulnerable advantage',False:'first with weak vulnerable disadvantage'},
@@ -58,7 +61,7 @@ class trained_player_queens:
                                 False: {True: {True: {True: {True: 'third no with strong vulnerable advantage',False: 'third no with strong vulnerable disadvantage'},
                                                       False: {True: 'third no with strong covered advantage',False: 'third no with strong covered disadvantage'}},
                                                False: {True: {True: 'third no with weak vulnerable advantage',False: 'third with no weak vulnerable disadvantage'},
-                                                       False: {True: 'third no with weak covered advantage',False: 'third with no weak covered disadvantage'}}},
+                                                     False: {True: 'third no with weak covered advantage',False: 'third with no weak covered disadvantage'}}},
                                         False: {True: {True: {True: 'third no without strong vulnerable advantage',False: 'third no without strong vulnerable disadvantage'},
                                                        False: {True: 'third no without strong covered advantage',False: 'third no without strong covered disadvantage'}},
                                                 False: {True: {True: 'third no without weak vulnerable advantage', False: 'third no without weak vulnerable disadvantage'},
@@ -117,8 +120,8 @@ class trained_player_queens:
 
         self.state_space_length = len(self.states_list)
         self.action_space_yes = ['low_card', 'mid_card', 'high_card']
-        self.action_space_no = ['queen','strong','vulnerable', 'advantage']
-        self.action_space_first = ['queen low', 'queen mid', 'queen high',
+        self.action_space_no = ['king','strong','vulnerable', 'advantage']
+        self.action_space_first = ['king low', 'king mid', 'king high',
                                    'storng low', 'strong mid', 'strong high',
                                    'vulnerable low', 'vulnerable mid', 'vulnerable high',
                                    'advantage low', 'advantage mid', 'advantage high']
@@ -180,10 +183,6 @@ class trained_player_queens:
             # print('index: ',self.suits.index(i[0]))
             if i in self.suits_left_list[self.suits.index(i[0])]:
                 self.suits_left_list[self.suits.index(i[0])].remove(i)
-            if i in self.queens:
-                index = self.queens.index(i)
-                self.queens.remove(i)
-                self.strong.pop(index)
             if len(self.advantages)>0:
                 for j in range(len(self.advantages)):
                     if len(self.advantages[j]) >0 and i[0] == self.advantages[j][0][0]:
@@ -229,12 +228,7 @@ class trained_player_queens:
         self.players_cards_expected = copy.deepcopy(self.players_cards)
         #print('expected: ',self.players_cards_expected)
         self.remove_cards(self.hand)
-        self.queens.clear()
-        self.have_queen()
-        for i in range(len(self.queens)):
-            self.strong_queen(self.queens[i])
-            #print('iii')
-            print(self.queens[i],' ',self.strong[i])
+
         self.advantages.clear()
         self.have_advantages()
 
@@ -266,8 +260,11 @@ class trained_player_queens:
         hearts = []
         diamonds = []
         clubs = []
+        self.have_king = False
         for i in self.hand:
             if i[0] == 'heart':
+                if i[1] == 'k':
+                   self.have_king = True
                 hearts.append(i)
             elif i[0] == 'diamond':
                 diamonds.append(i)
@@ -275,6 +272,7 @@ class trained_player_queens:
                 clubs.append(i)
             else:
                 sorted_hand.append(i)
+        self.len_heart = len(hearts)
         sorted_hand = sorted(sorted_hand, key=self.getKey)
         sorted_hand += sorted(hearts, key=self.getKey)
         sorted_hand += sorted(clubs, key=self.getKey)
@@ -320,6 +318,7 @@ class trained_player_queens:
                 card = self.Q_table_decision(cards_played, allowed, match)
                 print('^^^^^^^^^^^^^^^^^^^^ end q decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 print('trained card: ', card)
+                print('hand before play',self.hand)
                 return self.played_card(card)
 
 
@@ -331,37 +330,55 @@ class trained_player_queens:
                 # allowed = self.allowed_cards(cards_played[1][0])
                 # print(allowed)
                 card = self.Q_table_decision(cards_played.copy(), self.hand, True)
-                print('trained card: ', card)
+                print(self.name,' card: ', card)
+                print('hand before play', self.hand)
                 return self.played_card(card)
         else:
             if len(cards_played) > 0:
                 allowed_cards, match = self.allowed_cards(cards_played[0][1][0], self.hand)
                 action = random.randrange(3)
                 if match:
-                    if self.contains_queen(cards_played):
+                    print()
+                    if self.contains_king(cards_played):
+                        print('contains king')
                         action = 0
                     else:
-                        action = self.valid_action_queens(cards_played[0][1][0],cards_played)
-                    card = self.perform_action(cards_played.copy(), allowed_cards, (action, -1), match)
+                        action = self.valid_action(cards_played[0][1][0],cards_played)
+                        print('action: ',action)
+                        if allowed_cards[0][0] == 'heart' and action == 0:
+                            allowed_cards = self.allowed_cards_heart(allowed_cards)
+                            action = 1
+
+                    print('action: ',action)
+                    card = self.perform_action(cards_played.copy(), allowed_cards, action, match)
+
+                    print(self.name,' card: ', card)
+                    print('hand before play', self.hand)
                     return self.played_card(card)
 
                 else:
-                    queen = random.randrange(2) == 1
-                    if queen and len(self.queens) > 0:
-                        print('hello queens: ', self.queens)
-                        card = self.play_queen()
-                    advantage = random.randrange(2) == 1
-                    if advantage and len(self.advantages) > 0:
+                    if self.have_king and random.randrange(2) == 1:
+                        card = ('heart','k')
+
+                    elif len(self.advantages) > 0 and random.randrange(2) == 1:
                         print('hello advantage: ', self.advantages)
                         card = self.play_advantage()
                     else:
                         action = random.randrange(3)
-                        card = self.perform_action(cards_played.copy(), self.hand, (action,-1), False)
+                        card = self.perform_action(cards_played.copy(), self.hand, action, False)
+                    print(self.name,' card: ', card)
+                    print('hand before play', self.hand)
                     return self.played_card(card)
 
             else:
                 action = [random.randrange(3), random.randrange(3)]
-                card = self.perform_action(cards_played.copy(), self.hand, action, False)
+                allowed_cards = self.allowed_cards_heart(self.hand.copy())
+                temp = self.hand.copy()
+                card = self.perform_action(cards_played.copy(),allowed_cards , action, False)
+                if temp != self.hand:
+                    return 1>self.hand
+                print('ai card: ', card)
+                print('hand before play', self.hand)
                 return self.played_card(card)
 
     # need to check why ai players do not play the max card when they play a different suit
@@ -379,7 +396,19 @@ class trained_player_queens:
             return [1, 2], True
         return [0, 1, 2], True
 
-    def valid_action_queens(self,suit,cards_played):
+    def allowed_cards_heart(self,allowed_cards):
+        king_heart = ('heart','k')
+        Ace_heart = ('heart','A')
+        if king_heart in allowed_cards and len(allowed_cards)>1:
+            allowed_cards.remove(king_heart)
+        if Ace_heart in allowed_cards and len(allowed_cards)>1:
+            allowed_cards.remove(Ace_heart)
+
+        return allowed_cards
+
+
+
+    def valid_action(self,suit,cards_played):
         counter = 0
         if len(cards_played)==3:
             return 2
@@ -390,20 +419,11 @@ class trained_player_queens:
             return 0
         return 1
 
-    def contains_queen(self,cards_played):
+    def contains_king(self,cards_played):
         for i in cards_played:
-            if i[1][1] == 'q':
+            if i[1][1] == 'k' and i[1][0]=='heart':
                 return True
         return False
-
-
-    def have_queen(self):
-        #print('check for queen: ',self.hand)
-
-        for i in self.hand:
-            if i[1] == 'q':
-                self.queens.append(i)
-        #print(self.queens)
 
     def play_queen(self):
 
@@ -744,9 +764,11 @@ class trained_player_queens:
         #print('allowed: ',allowed_cards,' action: ',action,' match: ',match)
         #print('action: ',action,'   match: ',match)
         if not match:
+            print('allowed original: ', allowed_cards)
+            print('actions: ', action)
             suits_count = self.count_suits(allowed_cards)
-            print('allowed original: ',allowed_cards)
-            print('actions: ',action)
+            print('allowed original: ', allowed_cards)
+            print('actions: ', action)
             if type(action) == list:
                 allowed_cards = self.choose_suit(allowed_cards, action[0], suits_count)
                 print('original action: ', action[0], 'suits count: ', suits_count)
@@ -754,24 +776,15 @@ class trained_player_queens:
             else:
                 allowed_cards = self.choose_suit(allowed_cards, action, suits_count)
                 print('original action: ',action,'suits count: ',suits_count)
-                if type(action) == tuple:
-                    card = self.pick_queen(allowed_cards)
-                    if card != None:
-                        return card
+                if allowed_cards[0][0] == 'heart' and self.have_king:
+                    print('king action: ',self.have_king)
+                    card = ('heart','k')
+                    return card
                 action = 2
             print('cards played: ',cards_played)
             print('allowed: ',allowed_cards)
             print('action:       ',action,'   match: ',match)
-        elif type(action) == tuple:
-            action = action[0]
-            if action == 1:
-                print('check here',allowed_cards)
-                for i in range(1,len(allowed_cards)):
-                    if card_obj.get_rank(allowed_cards[-1][1])>10:
-                        allowed_cards.pop(-1)
-                    else:
-                        break
-                action = 2
+
 
 
 
@@ -808,6 +821,7 @@ class trained_player_queens:
         return queen
 
     def decide_card(self,suits_to_decide,action):
+        print(self.have_king)
         print('suits to decide: ',suits_to_decide)
         suit = suits_to_decide[0]
         length = len(suits_to_decide[0])
@@ -817,9 +831,9 @@ class trained_player_queens:
                 suit = suits_to_decide[i]
                 length = len(suits_to_decide[i])
 
-        if (suit[0][0],'q') in suit and action == 2:
-            print('returned card: ', suit[-1])
-            return (suit[0][0],'q')
+        if suit[0][0] =='heart' and self.have_king and action == 2:
+            print('returned card: ',('heart','k') )
+            return (suit[0][0],'k')
 
         if action == 0:
             print('returned card: ', self.min_card(suit,True,0))
@@ -841,8 +855,8 @@ class trained_player_queens:
         suits_dic = self.extract_suits(allowed_cards)
         vulnerabel_suits = []
         strong_suits = []
-        if len(self.queens)>0:
-            cards_to_play.append(self.decide_queen(suits_dic))
+        if self.have_king:
+            cards_to_play.append(('heart','k'))
             #print('returned queen: ',cards_to_play[-1])
             actions.append(0)
         else:
@@ -853,7 +867,8 @@ class trained_player_queens:
             if suits_eval.get(i) == False:
                 vulnerabel_suits.append(suits_dic.get(i))
             if suits_eval.get(i) == True:
-                vulnerabel_suits.append(suits_dic.get(i))
+                strong_suits.append(suits_dic.get(i))
+
         if len(strong_suits)>0:
             cards_to_play.append(self.decide_card(strong_suits,action))
             actions.append(1)
@@ -989,67 +1004,16 @@ class trained_player_queens:
             return True
         return False
 
-    def evaluate_queen(self,suit,my_cards,rank):
-        #print('####### evalutae queen ##########')
-        suit_left = self.suits_left(suit)
-        number_of_my_cards = len(my_cards)
-        temp = []
-        limit = 0
-        print(self.players_cards_expected)
-        for i in self.players_cards_expected:
-            player_suit = self.extract_suits(i).get(suit)
-            #print('type of suit: ',player_suit)
-            if type(player_suit) == list:
-                temp.append(len(player_suit))
-                if temp[-1] > 0:
-                    limit += 1
+    def evaluate_king(self,suit,my_cards):
 
-        number_of_players_cards = min(temp)
-        temp = [number_of_my_cards, number_of_players_cards]
-        number_of_cards_to_check = len(my_cards)
-        '''
-        print('temp: ',temp)
-        print('number: ',number_of_cards_to_check)
-        print('players cards expected: ',number_of_players_cards)
-        print('my cards: ', my_cards)
-'''
-        card_obj = cards()
-        strong = True
+        print('####### evalutae king ##########')
+        if self.have_king:
+            if self.len_heart > 4:
+                return True
+            return False
+        return not (suit, 'A') in my_cards
 
-        cards_left = self.suits_left(suit)
-        self.extract_suits(my_cards).get(suit)
-        '''
-        print('cards to check: ',my_cards)
-        print('cards to compare: ',cards_left)
-        print('cards checke: ',number_of_cards_to_check)
-        print('limit: ',limit)
-'''
-        found = False
 
-        counter = 0
-        stop = True
-        for i in range(number_of_cards_to_check):
-            for j in range(limit):
-                if i * limit + j < len(cards_left):
-                    counter += 1
-                    rank_to_compare = card_obj.get_rank(cards_left[i * limit + j][1])
-                    #print('rank to compare: ',rank_to_compare)
-                    if rank_to_compare > rank:
-                        found = True
-                        break
-                    if (counter == number_of_players_cards  or counter == 6) and stop:
-                        limit -=1
-                        stop = False
-                else:
-                    found = True
-                    break
-        if not found:
-            strong = found
-        #print('strong: ',strong)
-        if not stop:
-            limit +=1
-
-        return my_cards[0][0], strong,limit
 
     def strong_queen(self,queen):
         print('strong queen check')
@@ -1071,33 +1035,31 @@ class trained_player_queens:
         suit_left = self.suits_left(suit)
         return not (suit,'q') in suit_left
 
-    def suits_evaluation_queen(self):
+    def suits_evaluation_king(self):
         card_obj = cards()
         evaluation = {}
-        print(self.queens)
-        print(self.strong)
-        print('queen eval: ')
+        print('have king: ',self.have_king)
+
+        print('king eval: ')
         my_cards = self.extract_suits(self.hand)
         vulnerable = False
         eval = True
-        #print('my cardss: ',my_cards)
+        print('my cardss: ',my_cards)
         for i in self.suits:
-            #print('evaluation: ',evaluation)
-            #print()
+            print('evaluation: ',evaluation)
+            print()
             if not self.free_suit(i):
                 suit_card = my_cards.get(i)
-                #print('suit: ',suit_card)
+                print('suit: ',suit_card)
                 if type(suit_card) == list:
                     eval = True
-                    rank = card_obj.get_rank(suit_card[-1][1])
-                    #print('rank: ',rank)
                     limit = 3
-
-                    if rank >10:
-                        a, eval, limit = self.evaluate_queen(suit_card[0][0], suit_card, rank)
-                        print('eval: ',eval)
-                    #print('lowest: ', (self.suits_left(i)), '  my lowest: ',my_cards.get(i)[0])
-                    if not eval or ((limit-1<len(self.suits_left(i)))and(card_obj.get_rank(self.suits_left(i)[limit-1][1])<card_obj.get_rank(my_cards.get(i)[0][1]))):
+                    if i == 'heart':
+                        eval = self.evaluate_king(i,suit_card)
+                        print('eval heart: ',eval)
+                        self.strong = eval
+                    print('lowest: ', (self.suits_left(i)), '  my lowest: ',my_cards.get(i)[0])
+                    if not eval or (i != 'heart' and (limit-1<len(self.suits_left(i)))and( len(my_cards) > 2 and card_obj.get_rank(self.suits_left(i)[limit-1][1])<card_obj.get_rank(my_cards.get(i)[0][1]))):
                         eval = False
 
                     if not eval:
@@ -1108,6 +1070,7 @@ class trained_player_queens:
             #print('hey')
         print('eval: ',evaluation)
         return vulnerable,evaluation
+
 
     def suits_evaluation(self):
         evaluation = {}
@@ -1185,30 +1148,28 @@ class trained_player_queens:
     def current_state(self, cards_played, allowed_cards, match):
 
         print('my cards state',self.hand)
-        vulnerable, suits_dic = self.suits_evaluation_queen()
+        vulnerable, suits_dic = self.suits_evaluation_king()
         advantage, cards = self.decide_advantage()
         print('cards played: ', cards_played)
         print(len(allowed_cards), 'allwed cards: ', allowed_cards)
         print('vul: ',vulnerable)
         print('suit dic: ',suits_dic)
         print('cards: ',cards)
-        strong = False not in self.strong
-        queen = True
-        if len(self.queens) == 0:
-            queen = False
-            strong, suits_dic = self.suits_evaluation()
+        strong = self.strong
+        king = self.have_king
+
 
         if len(cards_played) == 0:
 
-            print('que: ',queen,'  str: ',strong,'  vul: ',vulnerable,' advantage: ',advantage)
-            return self.state_space.get(1).get(queen).get(strong).get(vulnerable).get(advantage),suits_dic
+            print('king: ',king,'  str: ',strong,'  vul: ',vulnerable,' advantage: ',advantage)
+            return self.state_space.get(1).get(king).get(strong).get(vulnerable).get(advantage),suits_dic
 
         if match:
             print('mat: ', match, '  str: ', self.possible_queen(cards_played))
             return self.state_space.get(len(cards_played) + 1).get(match).get(self.possible_queen(cards_played)),suits_dic
 
         print('mat: ', match, '  str: ', strong, '  vul: ', vulnerable,' advantage: ',advantage)
-        return self.state_space.get(len(cards_played) + 1).get(match).get(queen).get(strong).get(vulnerable).get(advantage),suits_dic
+        return self.state_space.get(len(cards_played) + 1).get(match).get(king).get(strong).get(vulnerable).get(advantage),suits_dic
 
     # checked
 
@@ -1251,6 +1212,7 @@ class trained_player_queens:
                     for i in self.players_cards_minimax:
                         print(i)
                     my_hand = self.hand.copy()
+
                     reward = self.Q_reward(self.moves_ahead(), cards_played + [(self.name, card)], False,
                                            self.players_order, copy.deepcopy(self.players_cards_minimax), my_hand)
                     print('reward: ', reward)
