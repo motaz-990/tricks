@@ -799,7 +799,7 @@ class trained_player_tricks:
             #self.temp = False
         #return 2
         if len(self.hand)>2:
-            return 2
+            return 1
         return 1#len(self.hand)
 
     # check if I have a choice or I am forced to play a card
