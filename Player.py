@@ -1,5 +1,3 @@
-import random
-
 
 class Player:
 
@@ -8,6 +6,7 @@ class Player:
         #games = ['tricks']
         self.name = name
         self.score = 0
+        self.subscore = 0
         self.hand = []
         self.games = games
         self.game = ' '
@@ -35,6 +34,7 @@ class Player:
             self.hand.append(cards.pop())
 
     def choose_game(self):
+
         if self.human:
             for i in range (len(self.games)):
                 print(i+1,': ',self.games[i])
@@ -55,9 +55,11 @@ class Player:
 
 
     def get_score(self):
-        score = self.score
-        self.score = 0
-        return score
+        self.subscore= 0
+        return self.score
+
+    def get_subscore(self):
+        return self.subscore
 
 
     def play(self,cards_played):
@@ -95,16 +97,30 @@ class Player:
 
 
     def update_score(self,trick):
+
+        self.subscore -= 15
+        self.score -= 15
+        '''
         if self.game == 'tricks':
+            self.subscore -= 15
             self.score -= 15
+
         elif self.game == 'diamond':
-            a = 5
+            self.subscore -= 15
+            self.score -= 15
+
         elif self.game == 'king of hearts':
-            a = 5
+            self.subscore -= 15
+            self.score -= 15
+
         elif self.game == 'queens':
-            a = 5
+            self.subscore -= 15
+            self.score -= 15
+
         elif self.game == 'jack':
-            a = 5
+            self.subscore -= 15
+            self.score -= 15
+        '''
 
 def diamond_play(self):
     pass
