@@ -9,7 +9,9 @@ class trained_player_tricks:
         #games = ["tricks", "diamonds", "queens", "king", "jack"]
         games = ['tricks']
         self.ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'A']
+
         self.suits = ['spade', 'heart', 'club', 'diamond']
+
         self.diamonds_left= []
         self.clubs_left = []
         self.hearts_left = []
@@ -18,10 +20,12 @@ class trained_player_tricks:
         self.ai1_cards = []
         self.ai2_cards =[]
         self.ai3_cards = []
+
         self.suits_left_list =[self.spade_left,self.hearts_left,self.clubs_left,self.diamonds_left]
         self.players_cards = []
         self.players_cards_expected = []
         self.players_cards_minimax = []
+
         self.name = name
         self.players = [self.name, 'ai1', 'ai2', 'ai3']
         self.players_order = self.players.copy()
@@ -33,6 +37,7 @@ class trained_player_tricks:
         self.trained = trained
         self.temp = True
         #states: 1:'first_player',2:['second_same','second_different'],3:['third_same','third_different'],4:['fourth_same','fourth_different']
+
         #self.state_space = {1:0,2:{True:1,False:2},3:{True:3,False:4},4:{True:5,False:6}}
         #{0: {True: 'first low strong', False: 'first low weak'}, 1: {True: 'first mid strong', False: 'first mid weak'},
          #2: {True: 'first high strong', False: 'first high weak'}},
@@ -53,6 +58,7 @@ class trained_player_tricks:
                                    'mid weak low_card','mid weak mid_card','mid weak high_card',
                                    'lot strong low_card','lot strong mid_card','lot strong high_card',
                                    'lot weak low_card','lot weak mid_card','lot weak high_card']
+
         if self.name == 'Motaz':
             self.Q_table= self.create_Q_table()
         self.random_action = 90
@@ -69,22 +75,6 @@ class trained_player_tricks:
         for i in range(len(cards)):
             returned_card.append(cards[i][1])
         return returned_card
-
-
-    def make_copy(self,temp):
-        #self.cards_left = temp.copy()
-        #print('######################### make copy ##########################')
-        #print('temp: ', temp)
-        if type(temp[0])==list:
-            temp = []
-        #print('temp: ', temp)
-        #print(len(self.players_cards),' players cards: ',self.players_cards)
-
-        for i in range(len(self.players_cards)):
-
-            self.players_cards[i] = temp.copy()
-        #print(len(self.players_cards), ' players cards: ', self.players_cards)
-        return temp.copy()
 
     def reset_players_cards(self):
         self.players_cards=[]
@@ -121,21 +111,25 @@ class trained_player_tricks:
         #checked
 
 
+
     def reset_cards_left(self):
         self.cards_left.clear()
         for i in range(4):
             for j in range(13):
                 if i == 0:
                     self.cards_left.append((self.suits[i], self.ranks[j]))
+
                     self.spade_left.append((self.suits[i], self.ranks[j]))
                 if i == 1:
                     self.cards_left.append((self.suits[i], self.ranks[j]))
                     self.hearts_left.append((self.suits[i], self.ranks[j]))
+
                 if i == 2:
                     self.cards_left.append((self.suits[i], self.ranks[j]))
                     self.clubs_left.append((self.suits[i], self.ranks[j]))
                 if i == 3:
                     self.cards_left.append((self.suits[i], self.ranks[j]))
+
                     self.diamonds_left.append((self.suits[i], self.ranks[j]))
 
         self.players_cards.clear()
@@ -189,6 +183,7 @@ class trained_player_tricks:
                 clubs.append(i)
             else:
                 sorted_hand.append(i)
+
         sorted_hand = sorted(sorted_hand, key=self.getKey)
         sorted_hand += sorted(hearts, key=self.getKey)
         sorted_hand += sorted(clubs, key=self.getKey)
@@ -196,6 +191,7 @@ class trained_player_tricks:
 
         self.hand = sorted_hand.copy()
         #print('sorted hand: ',self.hand)
+
 
 
 
@@ -254,6 +250,7 @@ class trained_player_tricks:
         else:
             if len(cards_played) > 0:
                 allowed_cards,match = self.allowed_cards(cards_played[0][1][0],self.hand)
+
                 action = random.randrange(3)
                 if match:
                     actions,valid = self.valid_actions(allowed_cards,self.highest_card_played(cards_played))
@@ -283,6 +280,7 @@ class trained_player_tricks:
         if highest_card<card_obj.get_rank(allowed_cards[0][1]):
             return [1,2],True
         return [0,1,2],True
+
 
 
     def update_score(self, trick):
@@ -362,22 +360,26 @@ class trained_player_tricks:
         #print('mid card')
         card_obj = cards()
         if first:
+
             min = 3
         #print(min)
+
         card = allowed_cards[0]
         mid_rank = card_obj.get_rank(card[1])
         found_good_rank = min < mid_rank
         for i in range(1, len(allowed_cards)):
+
             #print('mid: ',mid_rank,'  min: ',min,'   rank: ',card_obj.get_rank(allowed_cards[i][1]))
             if not found_good_rank:
                 #print('did not find')
                 if card_obj.get_rank(allowed_cards[i][1]) > mid_rank:
                     #print('if', allowed_cards[i])
+
                     card = allowed_cards[i]
                     mid_rank = card_obj.get_rank(allowed_cards[i][1])
                     found_good_rank = min < mid_rank
             elif card_obj.get_rank(allowed_cards[i][1]) < mid_rank and card_obj.get_rank(allowed_cards[i][1]) > min:
-                #print('elif',allowed_cards[i])
+
                 card = allowed_cards[i]
                 mid_rank = card_obj.get_rank(allowed_cards[i][1])
 
@@ -394,6 +396,7 @@ class trained_player_tricks:
 
 
     def remove_player_cards(self,player,highest_rank,player_rank,suit,match,base_suit,trick):
+
 
         #print('remove player cards')
         new_cards = cards()
@@ -474,6 +477,7 @@ class trained_player_tricks:
                 #print('winner: ',trick_winner,'  player: ',previous_trick[i][0])
                 expected, index = self.remove_higher_cards(previous_trick[i][0], rank, suit)
                 self.players_cards_expected[index] = expected
+
 
 
 
@@ -562,6 +566,7 @@ class trained_player_tricks:
                     return cards[start_index+min_suit_length:]
                 else:
                     #print('returned card: ', cards[:start_index])
+
                     return cards[:start_index]
             else:
                 cards,suits_count = self.remove_min_suit(cards,start_index,min_suit_length,suits_count)
@@ -627,6 +632,7 @@ class trained_player_tricks:
                 allowed_cards = self.choose_suit(allowed_cards, action, suits_count)
                 #print('original action: ',action,'suits count: ',suits_count)
                 action = 2
+
             #print('cards played: ',cards_played)
             #print('allowed: ',allowed_cards)
             #print('action:       ',action,'   match: ',match)
@@ -802,6 +808,7 @@ class trained_player_tricks:
             return 1
         return 1#len(self.hand)
 
+
     # check if I have a choice or I am forced to play a card
     def Q_table_decision(self,cards_played, allowed_cards,match):
         update_Qtable = True
@@ -847,12 +854,14 @@ class trained_player_tricks:
                 #self.update_Q_table(state, action, reward)
             else:
                 print('do not update')
+
             return card
         else:
             # choose the max reward
             action = state.index(max(state))
             card = self.perform_action(cards_played, allowed_cards, action,match)
             print('best action: ',action)
+
             return card
 
 
@@ -919,6 +928,7 @@ class trained_player_tricks:
 
 
     def minimax(self,next_turn,my_turn,suit,play_order,players_cards,my_hand):
+
         '''
         print()
         print('&&&&&&&&&&&&&&&&& parameters minimax &&&&&&&&&&&&&&&&&&&&&&&&&')
@@ -931,8 +941,6 @@ class trained_player_tricks:
             return []
 
 
-
-        #print(len(cards_to_play),' cards to play: ',cards_to_play)
         possible_trick = []
         possible_tricks = []
         possible_plays = []
@@ -953,6 +961,7 @@ class trained_player_tricks:
 
                 #self.cards_left = temp.copy()
 
+
                 if len(possible_plays) == 0:
                     possible_tricks.append(possible_trick[0])
                 else:
@@ -961,6 +970,7 @@ class trained_player_tricks:
                     print('possible tricks: ',possible_tricks)
                     print('possible trick: ', possible_trick)
 '''
+
                     possible_tricks += self.possible_moves(possible_plays.copy(), possible_trick.copy(), True)
 
                 possible_trick.pop(-1)
@@ -978,6 +988,7 @@ class trained_player_tricks:
                         return []
                     suit = cards_to_play[i][0]
 
+
                 #print('suit: ', suit)
                 #print('possible_trick', possible_trick)
 
@@ -990,6 +1001,7 @@ class trained_player_tricks:
                 #print('possible plays: ',possible_plays)
                 #cards_to_play = self.make_copy(temp.copy())
 
+
                 if len(possible_plays) == 0:
                     possible_tricks.append(possible_trick[0])
                 else:
@@ -998,7 +1010,8 @@ class trained_player_tricks:
                     print('possible tricks: ',possible_tricks)
                     print('possible trick: ', possible_trick)
                     print('&&&&&&&&&&&&&&&&&  posssible moves &&&&&&&&&&&&&&&&&&&&&&&&&&')
-'''
+                    '''
+
                     possible_tricks += self.possible_moves(possible_plays.copy(), possible_trick, True)
                     #print('&&&&&&&&&&&&&&&&& end posssible moves &&&&&&&&&&&&&&&&&&&&&&&&&&')
                 # possible_tricks.append(possible_trick.copy())
@@ -1053,6 +1066,7 @@ class trained_player_tricks:
     def play_trick(self,cards_played,play_order,players_cards,my_hand):
 
 
+
         print()
         print('&&&&&&&&&&&&&&&&& parameters play trick &&&&&&&&&&&&&&&&&&&&&&&&&')
         print('cards played: ', cards_played)
@@ -1076,6 +1090,7 @@ class trained_player_tricks:
         '''
         print('&&&&&&&&&&&&&&&&& end minimax &&&&&&&&&&&&&&&&&&&&&&&&&')
         print('possibl tricks^^: ',possible_tricks)
+
         print('possible_tricks length: ',len(possible_tricks))
 '''
         #print('cards played: minimax ', cards_played)
@@ -1111,6 +1126,7 @@ class trained_player_tricks:
                 else:
                     a=0
                     #print('error: ',cards_played)
+
 
             cards_played = temp.copy()
 
@@ -1184,6 +1200,7 @@ class trained_player_tricks:
         print('future: ', future_trick)
         print('play order: ', play_order)
 
+
         if moves_ahead == 0:
             #print('finnnnnnnnnnnneshed')
             return 0
@@ -1197,6 +1214,7 @@ class trained_player_tricks:
             #print('play order: ', play_order)
             #print('my turn: ', self.my_turn(play_order))
             #self.cards_played(cards_played,True,-1)
+
             #print('players_cards: ', self.players_cards[0])
 
             cards_played = []
@@ -1211,6 +1229,7 @@ class trained_player_tricks:
             #print('extracted: ',extracted_cards)
             #for i in range(len(temp)):
                 #temp[i]+=extracted_cards
+
 
 
             #print('cards played: ', cards_played, '    temp: ', temp)
@@ -1252,6 +1271,7 @@ class trained_player_tricks:
 
                 #print('my hand after copy: ', self.hand)
                 #print('&&&&&&&&&&&&&&&&& end sub Q reward &&&&&&&&&&&&&&&&&&&&&&&&&&')
+
 
         '''
         if future_trick:
@@ -1342,5 +1362,6 @@ class trained_player_tricks:
 
 
         #print(f.read())
+
 
 

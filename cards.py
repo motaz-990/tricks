@@ -1,3 +1,4 @@
+
 import random
 
 
@@ -23,15 +24,6 @@ class cards:
         return self.ranks[card]
 
     def get_rank_name(self,rank):
+
         return self.ranksNames[rank-1]
-
-
-
-
-
-
-
-
-
-
 
