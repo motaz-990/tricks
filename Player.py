@@ -75,9 +75,9 @@ class Player:
 
 
     def get_score(self):
-        print(self.name,' check score: ',self.score)
+        #print(self.name,' check score: ',self.score)
         self.score += self.game_player.get_score()
-        print(self.name,' check score: ',self.score)
+        #print(self.name,' check score: ',self.score)
 
         return self.score
 

@@ -1251,6 +1251,7 @@ class trained_player_queens:
                     for i in self.players_cards_minimax:
                         print(i)
                     my_hand = self.hand.copy()
+
                     reward = self.Q_reward(self.moves_ahead(), cards_played + [(self.name, card)], False,
                                            self.players_order, copy.deepcopy(self.players_cards_minimax), my_hand)
                     print('reward: ', reward)
