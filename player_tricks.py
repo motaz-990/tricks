@@ -32,6 +32,7 @@ class player_tricks:
         self.game = 'tricks'
         self.trained = trained
         self.temp = True
+
         #states: 1:'first_player',2:['second_same','second_different'],3:['third_same','third_different'],4:['fourth_same','fourth_different']
         #self.state_space = {1:0,2:{True:1,False:2},3:{True:3,False:4},4:{True:5,False:6}}
         #{0: {True: 'first low strong', False: 'first low weak'}, 1: {True: 'first mid strong', False: 'first mid weak'},
@@ -55,6 +56,7 @@ class player_tricks:
                                    'lot weak low_card','lot weak mid_card','lot weak high_card']
         if self.name == 'Motaz':
             self.Q_table= self.create_Q_table()
+            print('hi I am tricks player')
         self.random_action = 90
         self.alpha = 0
         self.discount =0
@@ -195,9 +197,6 @@ class player_tricks:
         self.hand = sorted_hand.copy()
         #print('sorted hand: ',self.hand)
 
-
-
-
         print(self.name,'cards: ',self.hand)
         #print(len(cards), ' cards: ', cards)
         self.reset_cards_left()
@@ -284,7 +283,7 @@ class player_tricks:
         return [0,1,2],True
 
 
-    def update_score(self):
+    def update_score(self,trick):
 
         self.subscore -= 15
         self.score -= 15

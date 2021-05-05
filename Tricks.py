@@ -24,8 +24,8 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 20
-sub_games_left = 20
+games_left = 10
+sub_games_left = 10
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
@@ -83,8 +83,8 @@ def play():
     return cards_played,winner
 
 
-def update_score(trick_winner):
-    trick_winner.update_score()
+def update_score(trick_winner,trick):
+    trick_winner.update_score(trick)
 
     # subscores[i] =players[i].get_subscore()
     # scores[i]+= subscores[i]
@@ -106,25 +106,6 @@ def end_subgame():
         print('------------')
     return True
 
-
-
-
-    '''
-    subscores = [0, 0, 0, 0]
-    scores = [0, 0, 0, 0]
-    for i in range(len(players)):
-        subscores[i] = players[i].get_subscore()
-        scores[i] = players[i].get_score()
-    print('subscores: ', subscores)
-    print('scores: ', scores)
-   
-    if len(kingdoms_order[0].games) == 0:
-        kingdoms_order.append(kingdoms_order.pop(0))
-        print('------------------')
-        b = input('#############kingdom finished#######################')
-        print('------------')
-    return scores
-    '''
 
 def trick_winner(cards_played):
     new_cards = cards()
@@ -159,7 +140,7 @@ while not end_game:
         print('--------------')
         cards_played,winner = play()
         players_order, order_of_play = play_order(players_order, order_of_play,winner)
-        update_score(players_order[0])
+        update_score(players_order[0],cards_played)
         #update_score(players_order[0], cards_played)
         print('---------------')
 

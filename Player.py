@@ -2,6 +2,8 @@ from cards import cards
 import copy
 import random
 from player_tricks import player_tricks
+from player_diamonds import player_diamonds
+
 class Player:
 
     def __init__(self, name,human):
@@ -16,10 +18,6 @@ class Player:
         self.human = human
 
         self.game_player = 0
-        self.diamonds_player = 0
-        self.queens_player = 0
-        self.king_player = 0
-        self.jack_player = 0
 
 
     def allowed_cards(self, suit):
@@ -59,13 +57,16 @@ class Player:
         #print('set game: ',game)
         #print('original hand: ',self.name,' ',self.hand)
         self.game = game
-        if True or self.game == 'tricks':
-            #print('check ')
-            #print(self.game_player.hand)
+        if  False and self.game == 'tricks':
             self.game_player = player_tricks(self.name, self.human)
 
-            #print(self.game_player.hand)
+        elif True or self.game == 'diamonds':
+            self.game_player = player_diamonds(self.name, self.human)
+
+
         self.game_player.receive_cards(self.hand)
+        #print('sorted hand: ', self.game_player.hand)
+
 
     def played_card(self, card):
         for i in range (len(self.hand)) :
@@ -85,20 +86,26 @@ class Player:
 
 
     def play(self,cards_played,play_order):
-        if True or self.game == 'tricks':
+        if self.game == 'tricks':
             #print(self.name,' playing with ',self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             #print('finished playing')
+            return card
+        elif True or self.game == 'diamonds':
+            print(self.name,' playing with ',self.hand)
+            card = self.game_player.play(cards_played, play_order)
+            self.played_card(card)
+            print('finished playing')
             return card
 
 
 
 
 
-    def update_score(self):
+    def update_score(self,trick):
 
-        self.game_player.update_score()
+        self.game_player.update_score(trick)
         '''
         if self.game == 'tricks':
             self.subscore -= 15

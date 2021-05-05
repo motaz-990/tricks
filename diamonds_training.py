@@ -25,8 +25,8 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 100
-sub_games_left = 100
+games_left = 1
+sub_games_left = 1
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
@@ -88,8 +88,8 @@ def play():
         players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
     print('$$$$$$$ cards played $$$$$$$$$$$ : ',cards_played)
     winner = trick_winner(cards_played)
-    players[0].analyse_trick_diamond(cards_played,cards_played[winner][0])
-    players[0].number_of_cards()
+    #players[0].analyse_trick_diamond(cards_played,cards_played[winner][0])
+    #players[0].number_of_cards()
 
 
     return cards_played,winner
