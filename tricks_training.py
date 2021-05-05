@@ -1,5 +1,5 @@
 from cards import cards
-from trained_player_tricks import trained_player_tricks
+from tricks_player import tricks_player
 import random
 
 #rename to trianing tricks
@@ -10,10 +10,10 @@ deck = cards()
 
 # def __init__(self, name, score, hand, game,human):
 
-player = trained_player_tricks('Motaz', True)
-ai1 = trained_player_tricks('ai1', False)
-ai2 = trained_player_tricks('ai2', False)
-ai3 = trained_player_tricks('ai3', False)
+player = tricks_player('Motaz', False)
+ai1 = tricks_player('ai1', False)
+ai2 = tricks_player('ai2', False)
+ai3 = tricks_player('ai3', False)
 players = [player, ai1, ai2, ai3]
 temp_players = [player, ai1, ai2, ai3]
 players_order = players
@@ -25,8 +25,8 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 5
-sub_games_left = 5
+games_left = 1
+sub_games_left = 1
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
@@ -59,12 +59,6 @@ def deal_cards(players, cards):
     for i in players:
         i.receive_cards(cards)
 
-'''
-def choose_game():
-    game = 'tricks'
-    for i in range(len(temp_players)):
-        temp_players[i].set_game(game)
-'''
 
 
 def play():
@@ -88,8 +82,8 @@ def play():
         players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
     print('$$$$$$$ cards played $$$$$$$$$$$ : ',cards_played)
     winner = trick_winner(cards_played)
-    players[0].analyse_trick(cards_played,cards_played[winner][0])
-    players[0].number_of_cards()
+    #players[0].analyse_trick(cards_played,cards_played[winner][0])
+    #players[0].number_of_cards()
 
 
     return cards_played,winner
@@ -166,5 +160,5 @@ while not end_game:
         winner = players[scores.index(max(scores))].name
         print('the winner is: ', winner)
         print("would you like to play another game?")
-        player.learned_Q_table(start_of_the_game)
+
 

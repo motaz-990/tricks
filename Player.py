@@ -1,4 +1,7 @@
-
+from cards import cards
+import copy
+import random
+from player_tricks import player_tricks
 class Player:
 
     def __init__(self, name,human):
@@ -11,6 +14,13 @@ class Player:
         self.games = games
         self.game = ' '
         self.human = human
+
+        self.game_player = 0
+        self.diamonds_player = 0
+        self.queens_player = 0
+        self.king_player = 0
+        self.jack_player = 0
+
 
     def allowed_cards(self, suit):
         allowed = []
@@ -46,7 +56,16 @@ class Player:
             return self.game
 
     def set_game(self, game):
+        #print('set game: ',game)
+        #print('original hand: ',self.name,' ',self.hand)
         self.game = game
+        if True or self.game == 'tricks':
+            #print('check ')
+            #print(self.game_player.hand)
+            self.game_player = player_tricks(self.name, self.human)
+
+            #print(self.game_player.hand)
+        self.game_player.receive_cards(self.hand)
 
     def played_card(self, card):
         for i in range (len(self.hand)) :
@@ -55,51 +74,31 @@ class Player:
 
 
     def get_score(self):
-        self.subscore= 0
+        print(self.name,' check score: ',self.score)
+        self.score += self.game_player.get_score()
+        print(self.name,' check score: ',self.score)
+
         return self.score
 
     def get_subscore(self):
-        return self.subscore
+        return self.game_player.get_subscore()
 
 
-    def play(self,cards_played):
-        if self.human:
-            #print('your cards: ', self.hand)
-            if len(cards_played) >0:
-                print('------------------------')
-
-                allowed = self.allowed_cards(cards_played[0][1][0])
-                for i in range(len(allowed)):
-                    print(i + 1, ': ', allowed[i])
-                index_card = input('enter the number of the card you want to play (e.g 1): ')
-                card = allowed[int(index_card)-1]
-
-                return self.played_card(card)
-
-
-            else :
-
-                for i in range(len(self.hand)):
-                    print(i + 1, ': ', self.hand[i])
-                #allowed = self.allowed_cards(cards_played[1][0])
-                #print(allowed)
-                card = input('enter the number of the card you want to play (e.g 1): ')
-                return self.hand.pop(int(card) - 1)
-        else :
-            if len(cards_played) > 0:
-
-                return self.played_card(self.allowed_cards(cards_played[0][1][0])[0])
-            else :
-
-                return self.hand.pop()
+    def play(self,cards_played,play_order):
+        if True or self.game == 'tricks':
+            #print(self.name,' playing with ',self.hand)
+            card = self.game_player.play(cards_played, play_order)
+            self.played_card(card)
+            #print('finished playing')
+            return card
 
 
 
 
-    def update_score(self,trick):
 
-        self.subscore -= 15
-        self.score -= 15
+    def update_score(self):
+
+        self.game_player.update_score()
         '''
         if self.game == 'tricks':
             self.subscore -= 15

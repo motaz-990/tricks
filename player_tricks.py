@@ -3,7 +3,7 @@ import copy
 import random
 
 
-class trained_player_tricks:
+class player_tricks:
 
     def __init__(self, name, trained):
         #games = ["tricks", "diamonds", "queens", "king", "jack"]
@@ -172,9 +172,7 @@ class trained_player_tricks:
 
     def receive_cards(self, cards):
         self.hand.clear()
-
-        while len(cards) > 0 and len(self.hand) < 13:
-            self.hand.append(cards.pop())
+        self.hand = cards
 
         sorted_hand = []
         hearts = []
@@ -252,6 +250,7 @@ class trained_player_tricks:
                 print('trained card: ', card)
                 return self.played_card(card)
         else:
+
             if len(cards_played) > 0:
                 allowed_cards,match = self.allowed_cards(cards_played[0][1][0],self.hand)
                 action = random.randrange(3)
@@ -285,7 +284,7 @@ class trained_player_tricks:
         return [0,1,2],True
 
 
-    def update_score(self, trick):
+    def update_score(self):
 
         self.subscore -= 15
         self.score -= 15
@@ -816,6 +815,7 @@ class trained_player_tricks:
                     update_Qtable = False
                 self.random_action -= 0.1
                 print('action: ', action)
+                '''
                 update_Qtable = True
                 if update_Qtable and self.temp:
                     self.players_cards_minimax = copy.deepcopy(self.players_cards_expected)
@@ -826,7 +826,7 @@ class trained_player_tricks:
                     reward = self.Q_reward(self.moves_ahead(),cards_played+[(self.name,card)],False,self.players_order,copy.deepcopy(self.players_cards_minimax),my_hand)
                     print('reward: ',reward)
                     #self.update_Q_table(state, action, reward)
-
+                '''
                 return card
 
             actions, update_Qtable = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
@@ -836,6 +836,7 @@ class trained_player_tricks:
             self.random_action -= 0.1
 
             #print('action: ',action)
+            '''
             update_Qtable = True
             if update_Qtable and self.temp:
                 self.players_cards_minimax = copy.deepcopy(self.players_cards_expected)
@@ -847,6 +848,7 @@ class trained_player_tricks:
                 #self.update_Q_table(state, action, reward)
             else:
                 print('do not update')
+            '''
             return card
         else:
             # choose the max reward
@@ -1025,8 +1027,7 @@ class trained_player_tricks:
             if play_order[i] == self.name:
                 return i
 
-    # checked first iteration
-    # checked minimax first iteration
+
 
     def check_trick(self,trick):
         print('trick to check: ',trick)
