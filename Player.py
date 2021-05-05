@@ -4,17 +4,18 @@ import random
 from player_tricks import player_tricks
 from player_diamonds import player_diamonds
 from player_queens import player_queens
+from player_king import player_king
 
 class Player:
 
     def __init__(self, name,human):
-        games = ["tricks", "diamonds", "queens", "king", "jack"]
+
         #games = ['tricks']
         self.name = name
         self.score = 0
         self.subscore = 0
         self.hand = []
-        self.games = games
+        self.games = ["tricks", "diamonds", "queens", "king", "jack"]
         self.game = ' '
         self.human = human
 
@@ -48,28 +49,34 @@ class Player:
             for i in range (len(self.games)):
                 print(i+1,': ',self.games[i])
             game = input('enter the number of the game you would like to play: ')
-            self.set_game(self.games.pop(int(game)-1))
-            return self.game
+            game = self.games[int(game)-1]
+            self.games.remove(game)
+            return game
         else:
-            self.set_game(self.games.pop())
-            return self.game
+            game = self.games[random.randrange(len(self.games))]
+            self.games.remove(game)
+            return game
 
     def set_game(self, game):
-        #print('set game: ',game)
+        print('set game: ',game)
         #print('original hand: ',self.name,' ',self.hand)
         self.game = game
-        if  False and self.game == 'tricks':
+        if self.game == 'tricks':
             self.game_player = player_tricks(self.name, self.human)
 
-        elif False and self.game == 'diamonds':
+        elif self.game == 'diamonds':
             self.game_player = player_diamonds(self.name, self.human)
 
-        elif True or self.game == 'queens':
+        elif self.game == 'queens':
             self.game_player = player_queens(self.name, self.human)
 
+        elif self.game == 'king':
+            self.game_player = player_king(self.name, self.human)
+        else:
+            self.game_player = player_queens(self.name, self.human)
 
         self.game_player.receive_cards(self.hand)
-        print('sorted hand: ', self.game_player.hand)
+        #print('sorted hand: ', self.game_player.hand)
 
     def cards_played(self, cards, index_my_card):
         self.game_player.cards_played(cards, index_my_card)
@@ -79,6 +86,8 @@ class Player:
             if play_order[i] == self.name:
                 return i
 
+    def contains_king(self, cards_played):
+        return self.game_player.contains_king(cards_played)
 
     def played_card(self, card):
         for i in range (len(self.hand)) :
@@ -99,21 +108,28 @@ class Player:
 
     def play(self,cards_played,play_order):
         if False and self.game == 'tricks':
-            #print(self.name,' playing with ',self.hand)
+            #print(self.name,'tricks playing with ',len(self.hand),' 'self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             #print('finished playing')
             return card
 
         elif False and  self.game == 'diamonds':
-            print(self.name,' playing with ',len(self.hand),' ',self.hand)
+            print(self.name,'diamond playing with ',len(self.hand),' ',self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             print('finished playing')
             return card
 
-        elif True or self.game == 'queens':
-            print(self.name,' playing with ',len(self.hand),' ',self.hand)
+        elif False and self.game == 'queens':
+            print(self.name,'queen playing with ',len(self.hand),' ',self.hand)
+            card = self.game_player.play(cards_played, play_order)
+            self.played_card(card)
+            print('finished playing')
+            return card
+
+        elif True or self.game == 'king':
+            print(self.name,'king playing with ',len(self.hand),' ',self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             print('finished playing')

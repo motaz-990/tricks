@@ -24,8 +24,8 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 10
-sub_games_left = 10
+games_left = 5
+sub_games_left = 5
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
@@ -62,6 +62,7 @@ def deal_cards(players, cards):
 
 
 def choose_game():
+    print(kingdoms_order[0].games)
     game = kingdoms_order[0].choose_game()
     for i in range(len(kingdoms_order)):
         kingdoms_order[i].set_game(game)
@@ -84,8 +85,11 @@ def play():
 
 
     winner = trick_winner(cards_played)
+    finish = False
+    if players[0].game == 'king':
+        finish = players[0].contains_king(cards_played)
 
-    return cards_played,winner
+    return cards_played,winner,finish
 
 
 def update_score(trick_winner,trick):
@@ -109,6 +113,7 @@ def end_subgame():
         print('------------------')
         b = input('#############kingdom finished#######################')
         print('------------')
+
     return True
 
 
@@ -143,13 +148,13 @@ while not end_game:
 
     else:
         print('--------------')
-        cards_played,winner = play()
+        cards_played,winner,finish = play()
         players_order, order_of_play = play_order(players_order, order_of_play,winner)
         update_score(players_order[0],cards_played)
         #update_score(players_order[0], cards_played)
         print('---------------')
 
-        if len(players_order[-1].hand) == 0:
+        if len(players_order[-1].hand) == 0 or finish:
             new_subgame = end_subgame()
             games_left -= 1
             end_game = games_left == 0
