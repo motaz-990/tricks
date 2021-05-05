@@ -3,6 +3,7 @@ import copy
 import random
 from player_tricks import player_tricks
 from player_diamonds import player_diamonds
+from player_queens import player_queens
 
 class Player:
 
@@ -60,12 +61,23 @@ class Player:
         if  False and self.game == 'tricks':
             self.game_player = player_tricks(self.name, self.human)
 
-        elif True or self.game == 'diamonds':
+        elif False and self.game == 'diamonds':
             self.game_player = player_diamonds(self.name, self.human)
+
+        elif True or self.game == 'queens':
+            self.game_player = player_queens(self.name, self.human)
 
 
         self.game_player.receive_cards(self.hand)
-        #print('sorted hand: ', self.game_player.hand)
+        print('sorted hand: ', self.game_player.hand)
+
+    def cards_played(self, cards, index_my_card):
+        self.game_player.cards_played(cards, index_my_card)
+
+    def my_turn(self, play_order):
+        for i in range(len(play_order)):
+            if play_order[i] == self.name:
+                return i
 
 
     def played_card(self, card):
@@ -86,14 +98,22 @@ class Player:
 
 
     def play(self,cards_played,play_order):
-        if self.game == 'tricks':
+        if False and self.game == 'tricks':
             #print(self.name,' playing with ',self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             #print('finished playing')
             return card
-        elif True or self.game == 'diamonds':
-            print(self.name,' playing with ',self.hand)
+
+        elif False and  self.game == 'diamonds':
+            print(self.name,' playing with ',len(self.hand),' ',self.hand)
+            card = self.game_player.play(cards_played, play_order)
+            self.played_card(card)
+            print('finished playing')
+            return card
+
+        elif True or self.game == 'queens':
+            print(self.name,' playing with ',len(self.hand),' ',self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             print('finished playing')

@@ -78,6 +78,11 @@ def play():
     print('^^^^^^^^^^^^^ end play ^^^^^^^^^^^^^')
     # trick_winner(cards_played)
 
+    for i in range(len(players_order)):
+        players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
+    print('$$$$$$$ cards played $$$$$$$$$$$ : ',cards_played)
+
+
     winner = trick_winner(cards_played)
 
     return cards_played,winner
