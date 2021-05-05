@@ -24,11 +24,17 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 5
-sub_games_left = 5
+games_left = 20
+sub_games_left = 20
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
+suits = ['spade', 'heart', 'club', 'diamond']
+up_cards = [' ',' ',' ',' ']
+down_cards = [' ',' ',' ',' ']
+jack = [up_cards,down_cards]
+cards_left = 52
+score_of_winner = 200
 
 diamondBroken = False
 
@@ -74,7 +80,7 @@ def choose_game():
 def play():
     cards_played = []
     for i in range(len(players_order)):
-        cards_played.append((players_order[i].name, players_order[i].play(cards_played, order_of_play)))
+        cards_played.append((players_order[i].name, players_order[i].play(cards_played, order_of_play,0)))
         print(cards_played[i][0], 'played', cards_played[i][1])
     print('^^^^^^^^^^^^^ end play ^^^^^^^^^^^^^')
     # trick_winner(cards_played)
@@ -92,11 +98,46 @@ def play():
     return cards_played,winner,finish
 
 
+def play_jack(cards_left,score_of_winner):
+
+    for i in range(len(players_order)):
+        finished, played_card = players_order[i].play(jack,order_of_play,score_of_winner)
+        cards_left = update_jack(players_order[i].name,played_card ,cards_left)
+        if finished:
+            print('score:: ',score_of_winner)
+            score_of_winner -= 50
+            #print('score:: ', score_of_winner)
+
+    return score_of_winner,cards_left
+
+
 def update_score(trick_winner,trick):
     trick_winner.update_score(trick)
 
     # subscores[i] =players[i].get_subscore()
     # scores[i]+= subscores[i]
+
+def update_jack(player,card,cards_left):
+    card_obj = cards()
+    print('up: ',up_cards)
+    print('down: ',down_cards)
+    print(player,' played: ',card)
+    print('card: ',card)
+    if type(card)!= str:
+        index = suits.index(card[0])
+        if card_obj.get_rank(card[1])>10:
+            up_cards[index]=card
+        else:
+            down_cards[index]=card
+        cards_left -= 1
+
+    print('cards played so far: ')
+    print(up_cards)
+    print(down_cards)
+    jack[0] = up_cards
+    jack[1] = down_cards
+    return cards_left
+
 
 
 def end_subgame():
@@ -148,16 +189,29 @@ while not end_game:
 
     else:
         print('--------------')
-        cards_played,winner,finish = play()
-        players_order, order_of_play = play_order(players_order, order_of_play,winner)
-        update_score(players_order[0],cards_played)
-        #update_score(players_order[0], cards_played)
-        print('---------------')
 
-        if len(players_order[-1].hand) == 0 or finish:
-            new_subgame = end_subgame()
-            games_left -= 1
-            end_game = games_left == 0
+        if players_order[0].game == 'jack':
+            score_of_winner, cards_left = play_jack(cards_left, score_of_winner)
+            if cards_left == 0:
+                cards_left = 52
+                score_of_winner = 200
+                up_cards = [' ', ' ', ' ', ' ']
+                down_cards = [' ', ' ', ' ', ' ']
+                jack = [up_cards, down_cards]
+                new_subgame = end_subgame()
+                games_left -= 1
+                end_game = games_left == 0
+        else:
+            cards_played,winner,finish = play()
+            players_order, order_of_play = play_order(players_order, order_of_play,winner)
+            update_score(players_order[0],cards_played)
+            #update_score(players_order[0], cards_played)
+            print('---------------')
+
+            if len(players_order[-1].hand) == 0 or finish:
+                new_subgame = end_subgame()
+                games_left -= 1
+                end_game = games_left == 0
 
 
     if end_game:

@@ -5,6 +5,7 @@ from player_tricks import player_tricks
 from player_diamonds import player_diamonds
 from player_queens import player_queens
 from player_king import player_king
+from player_jack import player_jack
 
 class Player:
 
@@ -73,7 +74,8 @@ class Player:
         elif self.game == 'king':
             self.game_player = player_king(self.name, self.human)
         else:
-            self.game_player = player_queens(self.name, self.human)
+            self.game_player = player_jack(self.name, self.human)
+
 
         self.game_player.receive_cards(self.hand)
         #print('sorted hand: ', self.game_player.hand)
@@ -106,34 +108,41 @@ class Player:
         return self.game_player.get_subscore()
 
 
-    def play(self,cards_played,play_order):
-        if False and self.game == 'tricks':
+    def play(self,cards_played,play_order,score_of_winner):
+        if self.game == 'tricks':
             #print(self.name,'tricks playing with ',len(self.hand),' 'self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             #print('finished playing')
             return card
 
-        elif False and  self.game == 'diamonds':
+        elif self.game == 'diamonds':
             print(self.name,'diamond playing with ',len(self.hand),' ',self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             print('finished playing')
             return card
 
-        elif False and self.game == 'queens':
+        elif self.game == 'queens':
             print(self.name,'queen playing with ',len(self.hand),' ',self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             print('finished playing')
             return card
 
-        elif True or self.game == 'king':
+        elif self.game == 'king':
             print(self.name,'king playing with ',len(self.hand),' ',self.hand)
             card = self.game_player.play(cards_played, play_order)
             self.played_card(card)
             print('finished playing')
             return card
+        else:
+            print(self.name, 'jack playing with ', len(self.hand), ' ', self.hand)
+            just_finished, card = self.game_player.play(cards_played, play_order, score_of_winner)
+            self.played_card(card)
+            print('finished playing')
+            return just_finished,card
+
 
 
 
