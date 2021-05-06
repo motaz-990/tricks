@@ -128,7 +128,7 @@ class player_king:
 
         if self.name == 'Motaz':
             self.Q_table = self.create_Q_table()
-            print('hi I am king player')
+            #print('hi I am king player')
         self.random_action = 90
         self.alpha = 0
         self.discount = 0
@@ -166,7 +166,7 @@ class player_king:
 
     def remove_cards(self, cards):
 
-        print('cards:      ', cards)
+        #print('cards:      ', cards)
         #print('suits:      ',self.suits_left)
         for i in cards:
             if i in self.players_cards[0]:
@@ -280,7 +280,7 @@ class player_king:
         self.hand = sorted_hand.copy()
         #print('sorted hand: ',self.hand)
 
-        print(self.name, 'cards: ', self.hand)
+        #print(self.name, 'cards: ', self.hand)
         # print(len(cards), ' cards: ', cards)
         self.reset_cards_left()
         # checked
@@ -306,18 +306,21 @@ class player_king:
         if self.trained:
             # print('your cards: ', self.hand)
             if len(cards_played) > 0:
-                print('------------------------')
                 allowed_suit = cards_played[0][1][0]
                 allowed, match = self.allowed_cards(allowed_suit, self.hand)
                 print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                for i in range(len(allowed)):
-                    print(i + 1, ': ', allowed[i])
+                print('      your hand     ', '        allowed cards ')
+                for i in range(len(self.hand)):
+                    if i < len(allowed):
+                        print(i + 1, ': ', self.hand[i], '   ', i + 1, ': ', allowed[i])
+                    else:
+                        print(i + 1, ': ', self.hand[i])
                 print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 
                 card = self.Q_table_decision(cards_played, allowed, match)
-                print('^^^^^^^^^^^^^^^^^^^^ end q decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+
                 print('trained card: ', card)
-                print('hand before play',self.hand)
+                #print('hand before play',self.hand)
                 return self.played_card(card)
 
 
@@ -337,22 +340,22 @@ class player_king:
                 allowed_cards, match = self.allowed_cards(cards_played[0][1][0], self.hand)
                 action = random.randrange(3)
                 if match:
-                    print()
+                    #print()
                     if self.contains_king(cards_played):
-                        print('contains king')
+                        #print('contains king')
                         action = 0
                     else:
                         action = self.valid_action(cards_played[0][1][0],cards_played)
-                        print('action: ',action)
+                        #print('action: ',action)
                         if allowed_cards[0][0] == 'heart' and action == 0:
                             allowed_cards = self.allowed_cards_heart(allowed_cards)
                             action = 1
 
-                    print('action: ',action)
+                    #print('action: ',action)
                     card = self.perform_action(cards_played.copy(), allowed_cards, action, match)
 
-                    print(self.name,' card: ', card)
-                    print('hand before play', self.hand)
+                    #print(self.name,' card: ', card)
+                    #print('hand before play', self.hand)
                     return self.played_card(card)
 
                 else:
@@ -360,13 +363,13 @@ class player_king:
                         card = ('heart','k')
 
                     elif len(self.advantages) > 0 and random.randrange(2) == 1:
-                        print('hello advantage: ', self.advantages)
+                        #print('hello advantage: ', self.advantages)
                         card = self.play_advantage()
                     else:
                         action = random.randrange(3)
                         card = self.perform_action(cards_played.copy(), self.hand, action, False)
-                    print(self.name,' card: ', card)
-                    print('hand before play', self.hand)
+                    #print(self.name,' card: ', card)
+                    #print('hand before play', self.hand)
                     return self.played_card(card)
 
             else:
@@ -376,8 +379,8 @@ class player_king:
                 card = self.perform_action(cards_played.copy(),allowed_cards , action, False)
                 if temp != self.hand:
                     return 1>self.hand
-                print('ai card: ', card)
-                print('hand before play', self.hand)
+                #print('ai card: ', card)
+                #print('hand before play', self.hand)
                 return self.played_card(card)
 
     # need to check why ai players do not play the max card when they play a different suit
@@ -452,23 +455,7 @@ class player_king:
         if self.contains_king(trick):
                 self.subscore -= 75
                 self.score -= 75
-        '''
-        if self.game == 'tricks':
-            self.subscore -= 15
-            self.score -= 15
-        elif self.game == 'diamond':
-            self.subscore -= 15
-            self.score -= 15
-        elif self.game == 'king of hearts':
-            self.subscore -= 15
-            self.score -= 15
-        elif self.game == 'queens':
-            self.subscore -= 15
-            self.score -= 15
-        elif self.game == 'jack':
-            self.subscore -= 15
-            self.score -= 15
-        '''
+
 
     def create_Q_table(self):
 
@@ -494,7 +481,7 @@ class player_king:
 
         if first:
             max = 5
-        print(max)
+        #print(max)
         card = allowed_cards[0]
         min_rank = card_obj.get_rank(card[1])
         found_lower_than_max = min_rank < max
@@ -555,7 +542,7 @@ class player_king:
 
     def remove_player_cards(self, player, highest_rank, player_rank, suit, match, base_suit, trick):
 
-        print('remove player cards')
+        #print('remove player cards')
         new_cards = cards()
         index_player = 0
         for i in range(len(self.players)):
@@ -565,13 +552,13 @@ class player_king:
         card = copy.deepcopy(self.players_cards_expected[index_player])
         for i in trick:
             if i[1] in card:
-                print('to be removed: ',i[1])
-                print('cards to remove from: ',card)
+                #print('to be removed: ',i[1])
+                #print('cards to remove from: ',card)
                 card.remove(i[1])
-                print('cards after remove: ', card)
+                #print('cards after remove: ', card)
 
-        print(player,' ',highest_rank,' ',player_rank,' ',suit)
-        print(len(self.hand),len(card),card)
+        #print(player,' ',highest_rank,' ',player_rank,' ',suit)
+        #print(len(self.hand),len(card),card)
         if match:
             for i in range(highest_rank - player_rank - 1):
                 if (suit, new_cards.get_rank_name(player_rank + i + 1)) in card:
@@ -581,16 +568,16 @@ class player_king:
                 if (suit, new_cards.get_rank_name(player_rank + i)) in card:
                     card.remove((suit, new_cards.get_rank_name(player_rank + i)))
 
-            print(len(card), card)
+            #print(len(card), card)
             counter = 0
             for i in range(len(card)):
-                print('len: ', len(card), '  suit: ', base_suit, '  i: ', i)
-                print(card)
+                #print('len: ', len(card), '  suit: ', base_suit, '  i: ', i)
+                #print(card)
                 if card[i - counter][0] == base_suit:
                     card.pop(i - counter)
                     counter += 1
 
-        print(len(self.hand),len(card),card)
+        #print(len(self.hand),len(card),card)
         return copy.deepcopy(card), index_player
 
     def remove_higher_cards(self, player, rank, suit):
@@ -619,16 +606,16 @@ class player_king:
     def analyse_trick(self, previous_trick, trick_winner,suit,safe):
 
         new_cards = cards()
-        print('winnnnnnner: ',trick_winner)
+        #print('winnnnnnner: ',trick_winner)
         for i in range(len(previous_trick)):
             if safe:
                 rank = 14
             else:
                 rank = self.highest_card_played(previous_trick[:i + 1])
-            print('rank: ',rank)
+            #print('rank: ',rank)
             if not previous_trick[i][0] == 'Motaz':
-                print('analyse trick')
-                print('player: ',previous_trick[i][0], ' ',previous_trick[i][1])
+                #print('analyse trick')
+                #print('player: ',previous_trick[i][0], ' ',previous_trick[i][1])
                 player_rank = new_cards.get_rank(previous_trick[i][1][1])
                 if previous_trick[i][1][0] == suit:
                     if player_rank < rank:
@@ -646,9 +633,9 @@ class player_king:
                 self.players_cards_expected[index] = expected
 
     def number_of_cards(self):
-        print('ai1 cards expected: ', len(self.players_cards_expected[0]))
-        print('ai2 cards expected: ', len(self.players_cards_expected[1]))
-        print('ai3 cards expected: ', len(self.players_cards_expected[2]))
+        #print('ai1 cards expected: ', len(self.players_cards_expected[0]))
+        #print('ai2 cards expected: ', len(self.players_cards_expected[1]))
+        #print('ai3 cards expected: ', len(self.players_cards_expected[2]))
         if len(self.players_cards_expected[0]) < len(self.hand) or len(self.players_cards_expected[1]) < len(
                 self.hand) or len(self.players_cards_expected[2]) < len(self.hand):
             if 4 > self.hand:
@@ -743,13 +730,13 @@ class player_king:
 
     # require an alogritm to deal with the case of only one card left in a suit and you have the rest line 585
     def perform_action_first(self, suits_eval, allowed_cards):
-        print('allowed cards fir: ', allowed_cards)
+        #print('allowed cards fir: ', allowed_cards)
         subaction = random.randrange(3)
         update,action,card = self.perform_action_no(allowed_cards,suits_eval,subaction)
-        print('card: ',card)
-        print('subaction: ',subaction)
-        if update:
-            print('action decided: ',self.action_space_first[action*3+subaction])
+        #print('card: ',card)
+        #print('subaction: ',subaction)
+        #if update:
+            #print('action decided: ',self.action_space_first[action*3+subaction])
 
         return update,action*3+subaction,card
 
@@ -764,26 +751,26 @@ class player_king:
         #print('allowed: ',allowed_cards,' action: ',action,' match: ',match)
         #print('action: ',action,'   match: ',match)
         if not match:
-            print('allowed original: ', allowed_cards)
-            print('actions: ', action)
+            #print('allowed original: ', allowed_cards)
+            #print('actions: ', action)
             suits_count = self.count_suits(allowed_cards)
-            print('allowed original: ', allowed_cards)
-            print('actions: ', action)
+            #print('allowed original: ', allowed_cards)
+            #print('actions: ', action)
             if type(action) == list:
                 allowed_cards = self.choose_suit(allowed_cards, action[0], suits_count)
-                print('original action: ', action[0], 'suits count: ', suits_count)
+                #print('original action: ', action[0], 'suits count: ', suits_count)
                 action = action[1]
             else:
                 allowed_cards = self.choose_suit(allowed_cards, action, suits_count)
-                print('original action: ',action,'suits count: ',suits_count)
+                #print('original action: ',action,'suits count: ',suits_count)
                 if allowed_cards[0][0] == 'heart' and self.have_king:
-                    print('king action: ',self.have_king)
+                    #print('king action: ',self.have_king)
                     card = ('heart','k')
                     return card
                 action = 2
-            print('cards played: ',cards_played)
-            print('allowed: ',allowed_cards)
-            print('action:       ',action,'   match: ',match)
+            #print('cards played: ',cards_played)
+            #print('allowed: ',allowed_cards)
+            #print('action:       ',action,'   match: ',match)
 
 
 
@@ -799,14 +786,14 @@ class player_king:
             # print('midddd')
             return self.mid_card(allowed_cards, False, self.highest_card_played(cards_played))
         else:
-            print('allowed: ',allowed_cards)
-            print('the max card: ',self.max_card(allowed_cards))
+            #print('allowed: ',allowed_cards)
+            #print('the max card: ',self.max_card(allowed_cards))
             return self.max_card(allowed_cards)
         # checked (mid need to be corrected)
 
     def decide_queen(self,suits_dic):
-        print('queens: ',self.queens)
-        print('suits dic: ',suits_dic)
+        #print('queens: ',self.queens)
+        #print('suits dic: ',suits_dic)
         length = len(suits_dic.get(self.queens[0][0]))
         strong = self.strong[0]
         queen = self.queens[0]
@@ -821,33 +808,33 @@ class player_king:
         return queen
 
     def decide_card(self,suits_to_decide,action):
-        print(self.have_king)
-        print('suits to decide: ',suits_to_decide)
+        #print(self.have_king)
+        #print('suits to decide: ',suits_to_decide)
         suit = suits_to_decide[0]
         length = len(suits_to_decide[0])
         for i in range(1,len(suits_to_decide)):
             if len(suits_to_decide[i])<length and len(suits_to_decide[i])>0:
-                print('suit to decide loop: ',suits_to_decide[i],'  length: ',length)
+                #print('suit to decide loop: ',suits_to_decide[i],'  length: ',length)
                 suit = suits_to_decide[i]
                 length = len(suits_to_decide[i])
 
         if suit[0][0] =='heart' and self.have_king and action == 2:
-            print('returned card: ',('heart','k') )
+            #print('returned card: ',('heart','k') )
             return (suit[0][0],'k')
 
         if action == 0:
-            print('returned card: ', self.min_card(suit,True,0))
+            #print('returned card: ', self.min_card(suit,True,0))
             return self.min_card(suit,True,0)
         if action == 1:
-            print('returned card: ', self.mid_card(suit,True,0))
+            #print('returned card: ', self.mid_card(suit,True,0))
             return self.mid_card(suit,True,0)
         if action == 2:
-            print('returned card: ',self.max_card(suit))
+            #print('returned card: ',self.max_card(suit))
             return self.max_card(suit)
 
     def perform_action_no(self, allowed_cards,suits_eval,action):
-        print('allowed cards no: ',allowed_cards)
-        print('suits eval: ',suits_eval)
+        #print('allowed cards no: ',allowed_cards)
+        #print('suits eval: ',suits_eval)
         if suits_eval.get('free')!= None:
             return False,-1,allowed_cards[0]
         actions = []
@@ -899,10 +886,10 @@ class player_king:
         action = actions[random.randrange(len(actions))]
         #print('actions: ', actions)
         #print('len action :',len(actions))
-        print('action: ',action)
-        print('to play: ',cards_to_play)
-        print('decided action: ',self.action_space_no[action])
-        print('played: ',cards_to_play[action])
+        #print('action: ',action)
+        #print('to play: ',cards_to_play)
+        #print('decided action: ',self.action_space_no[action])
+        #print('played: ',cards_to_play[action])
 
         return len(actions)==1,action,cards_to_play[action]
 
@@ -1000,13 +987,13 @@ class player_king:
 
     def free_suit(self, suit):
         if len(self.suits_left(suit)) == 0:
-            print('free suit: ',self.suits_left(suit))
+            #print('free suit: ',self.suits_left(suit))
             return True
         return False
 
     def evaluate_king(self,suit,my_cards):
 
-        print('####### evalutae king ##########')
+        #print('####### evalutae king ##########')
         if self.have_king:
             if self.len_heart > 4:
                 return True
@@ -1016,10 +1003,10 @@ class player_king:
 
 
     def strong_queen(self,queen):
-        print('strong queen check')
+        #print('strong queen check')
         suit = queen[0]
         if self.free_suit(suit):
-            print('free ',suit)
+            #print('free ',suit)
             return False
         suit_card = self.extract_suits(self.hand).get(suit)
         #print(type(suit),' suit: ',suit)
@@ -1038,27 +1025,27 @@ class player_king:
     def suits_evaluation_king(self):
         card_obj = cards()
         evaluation = {}
-        print('have king: ',self.have_king)
+        #print('have king: ',self.have_king)
 
-        print('king eval: ')
+        #print('king eval: ')
         my_cards = self.extract_suits(self.hand)
         vulnerable = False
         eval = True
-        print('my cardss: ',my_cards)
+        #print('my cardss: ',my_cards)
         for i in self.suits:
-            print('evaluation: ',evaluation)
-            print()
+            #print('evaluation: ',evaluation)
+            #print()
             if not self.free_suit(i):
                 suit_card = my_cards.get(i)
-                print('suit: ',suit_card)
+                #print('suit: ',suit_card)
                 if type(suit_card) == list:
                     eval = True
                     limit = 3
                     if i == 'heart':
                         eval = self.evaluate_king(i,suit_card)
-                        print('eval heart: ',eval)
+                        #print('eval heart: ',eval)
                         self.strong = eval
-                    print('lowest: ', (self.suits_left(i)), '  my lowest: ',my_cards.get(i)[0])
+                    #print('lowest: ', (self.suits_left(i)), '  my lowest: ',my_cards.get(i)[0])
                     if not eval or (i != 'heart' and (limit-1<len(self.suits_left(i)))and( len(my_cards) > 2 and card_obj.get_rank(self.suits_left(i)[limit-1][1])<card_obj.get_rank(my_cards.get(i)[0][1]))):
                         eval = False
 
@@ -1068,7 +1055,7 @@ class player_king:
         if len(evaluation)==0:
             evaluation['free']=my_cards
             #print('hey')
-        print('eval: ',evaluation)
+        #print('eval: ',evaluation)
         return vulnerable,evaluation
 
 
@@ -1089,7 +1076,7 @@ class player_king:
         if len(evaluation) == 0:
             evaluation['free'] = my_cards
             # print('hey')
-        print('eval: ',evaluation)
+        #print('eval: ',evaluation)
         return vulnerable, evaluation
 
     def state_of_the_game(self, tricks_left):
@@ -1123,14 +1110,14 @@ class player_king:
         #print('possible diamond')
         #print(cards_played)
         cards = self.extract_cards(cards_played)
-        print(cards)
+        #print(cards)
         for i in cards:
             if i[1]=='q':
                 return 0
         players_left = 4-(len(cards_played)+1)
         for i in range(players_left):
             if self.potential_different(cards_played[0][1][0],self.players_cards_expected[i],cards_played):
-                print('hello')
+                #print('hello')
                 return 1
 
         return 2
@@ -1147,82 +1134,54 @@ class player_king:
 
     def current_state(self, cards_played, allowed_cards, match):
 
-        print('my cards state',self.hand)
+        #print('my cards state',self.hand)
         vulnerable, suits_dic = self.suits_evaluation_king()
         advantage, cards = self.decide_advantage()
-        print('cards played: ', cards_played)
-        print(len(allowed_cards), 'allwed cards: ', allowed_cards)
-        print('vul: ',vulnerable)
-        print('suit dic: ',suits_dic)
-        print('cards: ',cards)
+        #print('cards played: ', cards_played)
+        #print(len(allowed_cards), 'allwed cards: ', allowed_cards)
+        #print('vul: ',vulnerable)
+        #print('suit dic: ',suits_dic)
+        #print('cards: ',cards)
         strong = self.strong
         king = self.have_king
 
 
         if len(cards_played) == 0:
 
-            print('king: ',king,'  str: ',strong,'  vul: ',vulnerable,' advantage: ',advantage)
+            #print('king: ',king,'  str: ',strong,'  vul: ',vulnerable,' advantage: ',advantage)
             return self.state_space.get(1).get(king).get(strong).get(vulnerable).get(advantage),suits_dic
 
         if match:
-            print('mat: ', match, '  str: ', self.possible_queen(cards_played))
+            #print('mat: ', match, '  str: ', self.possible_queen(cards_played))
             return self.state_space.get(len(cards_played) + 1).get(match).get(self.possible_queen(cards_played)),suits_dic
 
-        print('mat: ', match, '  str: ', strong, '  vul: ', vulnerable,' advantage: ',advantage)
+        #print('mat: ', match, '  str: ', strong, '  vul: ', vulnerable,' advantage: ',advantage)
         return self.state_space.get(len(cards_played) + 1).get(match).get(king).get(strong).get(vulnerable).get(advantage),suits_dic
 
     # checked
 
-    def update_Q_table(self, state, action, reward):
-        print('state: ', state)
-        print('action', action)
-        print('Q table: ', self.Q_table)
-        print('state before: ', self.Q_table[self.states_list.index(state)][action])
-        if self.Q_table[self.states_list.index(state)][action] == 0:
-            self.Q_table[self.states_list.index(state)][action] = reward
-        else:
-            self.Q_table[self.states_list.index(state)][action] += reward - self.Q_table[self.states_list.index(state)][
-                action]
-        print('updated state: ', self.Q_table[self.states_list.index(state)][action])
+
 
     # ,cards_expected,state_of_the_game
-    def moves_ahead(self):
-        # if self.temp:
-        # self.temp = False
-        # return 2
-        if len(self.hand) > 2:
-            return 2
-        return 1  # len(self.hand)
+
 
     # check if I have a choice or I am forced to play a card
     def Q_table_decision(self, cards_played, allowed_cards, match):
         update_Qtable = True
         state,suits_eval = self.current_state(cards_played, allowed_cards, match)
-        if (random.random() < self.random_action):
+        if True or (random.random() < self.random_action):
             print('state: ',state)
             if state[0:5] == 'first':
                 # print('yes it is first: ',action)
                 update_Qtable,action, card = self.perform_action_first(suits_eval,self.hand)
                 self.random_action -= 0.1
-                print('action: ', action)
-                update_Qtable = True
-                '''
-                if update_Qtable and self.temp:
-                    self.players_cards_minimax = copy.deepcopy(self.players_cards_expected)
-                    for i in self.players_cards_minimax:
-                        print(i)
-                    my_hand = self.hand.copy()
+                #print('action: ', action)
 
-                    reward = self.Q_reward(self.moves_ahead(), cards_played + [(self.name, card)], False,
-                                           self.players_order, copy.deepcopy(self.players_cards_minimax), my_hand)
-                    print('reward: ', reward)
-                    # self.update_Q_table(state, action, reward)
-'''
                 return card
 
             if match:
                 actions, update_Qtable = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
-                print('actions: ', actions, '  update: ', update_Qtable)
+                #print('actions: ', actions, '  update: ', update_Qtable)
                 action = actions[random.randrange(len(actions))]
                 card = self.perform_action(cards_played, allowed_cards, action, match)
                 self.random_action -= 0.1
@@ -1234,185 +1193,16 @@ class player_king:
                 return card
 
             # print('action: ',action)
-            '''
-            update_Qtable = True
-            if update_Qtable and self.temp:
-                self.players_cards_minimax = copy.deepcopy(self.players_cards_expected)
-                for i in self.players_cards_minimax:
-                    print(i)
-                my_hand = self.hand.copy()
-                reward = self.Q_reward(self.moves_ahead(), cards_played + [(self.name, card)], False,
-                                       self.players_order, copy.deepcopy(self.players_cards_minimax), my_hand)
-                print('reward: ', reward)
-                # self.update_Q_table(state, action, reward)
-            else:
-                print('do not update')
-                '''
+
 
         else:
             # choose the max reward
             action = state.index(max(state))
             card = self.perform_action(cards_played, allowed_cards, action, match)
-            print('best action: ', action)
+            #print('best action: ', action)
             return card
 
 
-    def add_trick(self, trick, plays, card_by_card):
-        tricks = []
-
-        if not card_by_card:
-            for i in plays:
-                trick.append(i)
-            tricks.append(trick.copy())
-
-        else:
-            for i in plays:
-                trick.append(i)
-                tricks.append(trick.copy())
-                trick.pop(-1)
-
-        return tricks
-
-    def possible_moves(self, plays, trick, first_time):
-        if len(plays) > 2:
-            '''
-            print()
-            print('start debuging ')
-            print('playes: ',plays)
-            print('trick: ',trick)
-            print('first time: ',first_time)
-'''
-        tricks = []
-        temp = trick.copy()
-        if type(plays[0]) == list:
-            first_time = False
-            for i in plays:
-                tricks += self.possible_moves(i, temp.copy(), first_time)
-        else:
-            tricks += self.add_trick(trick, plays, first_time)
-        if len(plays) > 2:
-            # print('returned tricks: ',tricks)
-            d = -1
-        return tricks
-
-    def possible_cards(self, play_order, player_index, players_cards):
-        for i in range(len(self.players)):
-            if self.players[i] == play_order[player_index]:
-                return players_cards[i - 1]
-
-    def remove_minimax_cards(self, players_cards, cards):
-        if type(cards) == list:
-            cards = self.extract_cards(cards)
-        else:
-            cards = [cards]
-        for i in cards:
-            for j in range(len(players_cards)):
-                if i in players_cards[j]:
-                    players_cards[j].remove(i)
-        return players_cards
-
-    def add_card_minimax(self, players_cards, card, play_order, player_index):
-        for i in range(len(self.players)):
-            if self.players[i] == play_order[player_index]:
-                for j in range(len(self.players_cards_minimax)):
-                    self.players_cards_minimax[j].append(card)
-
-    def minimax(self, next_turn, my_turn, suit, play_order, players_cards, my_hand):
-        '''
-        print()
-        print('&&&&&&&&&&&&&&&&& parameters minimax &&&&&&&&&&&&&&&&&&&&&&&&&')
-        print('next_turn : ', next_turn)
-        print('my_turn: ', my_turn)
-        print('suit: ', suit)
-        print('play order: ', play_order)
-        '''
-        if next_turn == 4:
-            return []
-
-        # print(len(cards_to_play),' cards to play: ',cards_to_play)
-        possible_trick = []
-        possible_tricks = []
-        possible_plays = []
-
-        if next_turn == my_turn:
-            my_cards, a = self.allowed_cards(suit, my_hand.copy())
-            # copy_my_card = my_cards.copy()
-            # print('my cards(): ',my_cards, ' my hand: ',my_hand)
-            for i in range(len(my_cards)):
-                possible_trick.append((play_order[my_turn], my_cards.pop(0)))
-
-                # print('possible_trick', possible_trick)
-                if next_turn == 0 and suit == 'free':
-                    suit = possible_trick[-1][1][0]
-                    # print('card is: ',possible_trick[-1],' and suit is: ',suit)
-                possible_plays += self.minimax(next_turn + 1, my_turn, suit, play_order, players_cards, my_cards.copy())
-                # print('&&&&&&&&&&&&&&&&& end subminimax &&&&&&&&&&&&&&&&&&&&&&&&&&')
-
-                # self.cards_left = temp.copy()
-
-                if len(possible_plays) == 0:
-                    possible_tricks.append(possible_trick[0])
-                else:
-                    '''
-                    print('possible plays: ',possible_plays)
-                    print('possible tricks: ',possible_tricks)
-                    print('possible trick: ', possible_trick)
-'''
-                    possible_tricks += self.possible_moves(possible_plays.copy(), possible_trick.copy(), True)
-
-                possible_trick.pop(-1)
-                possible_plays.clear()
-        else:
-            cards_to_play = self.possible_cards(play_order, next_turn, players_cards).copy()
-            # print(len(cards_to_play),'cards left minimax: ',cards_to_play)
-            for i in range(len(cards_to_play)):
-
-                card = cards_to_play.pop(0)
-                possible_trick.append((play_order[next_turn], card))
-                # self.cards_played(cards_to_play[i],True,-1)
-                if next_turn == 0 and suit == 'free':
-                    if len(cards_to_play) == 0:
-                        return []
-                    suit = cards_to_play[i][0]
-
-                # print('suit: ', suit)
-                # print('possible_trick', possible_trick)
-
-                temp = copy.deepcopy(players_cards)
-                temp = self.remove_minimax_cards(temp, card)
-
-                possible_plays += self.minimax(next_turn + 1, my_turn, suit, play_order, temp, my_hand)
-                # self.add_card_minimax(players_cards,card)
-                # print('&&&&&&&&&&&&&&&&& end subminimax &&&&&&&&&&&&&&&&&&&&&&&&&&')
-                # print('possible plays: ',possible_plays)
-                # cards_to_play = self.make_copy(temp.copy())
-
-                if len(possible_plays) == 0:
-                    possible_tricks.append(possible_trick[0])
-                else:
-                    '''
-                    print('possible plays: ',possible_plays)
-                    print('possible tricks: ',possible_tricks)
-                    print('possible trick: ', possible_trick)
-                    print('&&&&&&&&&&&&&&&&&  posssible moves &&&&&&&&&&&&&&&&&&&&&&&&&&')
-'''
-                    possible_tricks += self.possible_moves(possible_plays.copy(), possible_trick, True)
-                    # print('&&&&&&&&&&&&&&&&& end posssible moves &&&&&&&&&&&&&&&&&&&&&&&&&&')
-                # possible_tricks.append(possible_trick.copy())
-
-                possible_trick.pop(-1)
-                possible_plays.clear()
-                # print('possible tricks',possible_tricks)
-
-            # print('&&&&&&&&&&&&finished options&&&&&&&&&&&&&&&&')
-
-        return possible_tricks.copy()
-
-    def evaluate_trick(self, winner):
-        if winner == self.name:
-            return -15
-        else:
-            return 0
 
     def my_turn(self, play_order):
         for i in range(len(play_order)):
@@ -1422,250 +1212,7 @@ class player_king:
     # checked first iteration
     # checked minimax first iteration
 
-    def check_trick(self, trick):
-        print('trick to check: ', trick)
-        temp = any(player in trick for player in self.players)
-        print('temp: ', temp)
-        return not temp
 
-    def possible_trick(self, possible_trick):
-        trick = []
-
-        print('test: ', possible_trick)
-        for i in range(len(possible_trick)):
-            if possible_trick[i] == list:
-                for j in range(len(possible_trick[i])):
-                    if possible_trick[i][j] == tuple:
-                        trick.append(possible_trick[i][j])
-            elif possible_trick[i] == tuple:
-                trick.append(possible_trick[i])
-        print('returned: ', trick)
-        return trick
-
-    def play_trick(self, cards_played, play_order, players_cards, my_hand):
-
-        print()
-        print('&&&&&&&&&&&&&&&&& parameters play trick &&&&&&&&&&&&&&&&&&&&&&&&&')
-        print('cards played: ', cards_played)
-        print('play order: ', play_order)
-        print('players cards: ', players_cards)
-
-        suit = 'free'
-        if len(cards_played) > 0:
-            suit = cards_played[0][1][0]
-            players_cards = self.remove_minimax_cards(players_cards, cards_played)
-
-        print('suit: ', suit)
-        print('my cards: ', my_hand)
-        print(len(players_cards[0]), 'cards left to play: ', players_cards[0])
-        print(len(players_cards[1]), 'cards left to play: ', players_cards[1])
-        print(len(players_cards[2]), 'cards left to play: ', players_cards[2])
-
-        possible_tricks = self.minimax(len(cards_played), self.my_turn(play_order), suit, play_order,
-                                       copy.deepcopy(players_cards), my_hand.copy())
-        '''
-        print('&&&&&&&&&&&&&&&&& end minimax &&&&&&&&&&&&&&&&&&&&&&&&&')
-        print('possibl tricks^^: ',possible_tricks)
-        print('possible_tricks length: ',len(possible_tricks))
-'''
-        # print('cards played: minimax ', cards_played)
-        tricks = []
-        temp = cards_played.copy()
-        '''
-        print()
-        print(len(players_cards[0]), 'cards left to play: ', players_cards[0])
-        print(len(players_cards[1]), 'cards left to play: ', players_cards[1])
-        print(len(players_cards[2]), 'cards left to play: ', players_cards[2])
-        print()
-        '''
-        for i in range(len(possible_tricks)):
-            if type(possible_tricks[i]) == list:
-
-                for j in range(len(possible_tricks[i])):
-                    # print('possibl tricks sub i : ',possible_tricks[i][j])
-                    # print('before cards played: ',cards_played)
-                    cards_played.append(possible_tricks[i][j])
-                    # print('after cards played: ', cards_played)
-
-            else:
-                cards_played.append(possible_tricks[i])
-
-            if len(cards_played) == 4 and self.check_trick(cards_played):
-                tricks.append(cards_played.copy())
-            else:
-
-                # print('error: ',cards_played)
-                cards_played = self.possible_trick(cards_played)
-                if len(cards_played) == 4:
-                    tricks.append(cards_played.copy())
-                else:
-                    a = 0
-                    # print('error: ',cards_played)
-
-            cards_played = temp.copy()
-
-        if len(tricks) == 0:
-            tricks = cards_played.copy()
-        # print(len(tricks),'tricks: ', tricks)
-        return tricks
-
-    def trick_winner(self, cards_played):
-        new_cards = cards()
-        # print(cards_played)
-        suit, rank = cards_played[0][1][0], new_cards.get_rank(cards_played[0][1][1])
-        winner = 0
-        for i in range(1, len(cards_played)):
-            if cards_played[i][1][0] == suit and new_cards.get_rank(cards_played[i][1][1]) > rank:
-                rank = new_cards.get_rank(cards_played[i][1][1])
-                winner = i
-        # print('winner is : ', cards_played[winner])
-        return winner, cards_played[winner][0]
-
-    def play_order(self, players, first_player):
-        ordered = []
-        for i in range(len(players)):
-            ordered += [players[first_player % len(players)]]
-            first_player += 1
-        return ordered
-
-    def set_play_order(self, players_order, cards_played):
-
-        winner_index, winner_name = self.trick_winner(cards_played)
-        players_order = self.play_order(players_order, winner_index)
-        return players_order, winner_name
-
-    def analyse_minimax(self, cards_played, trick_winner):
-
-        # print()
-        # print('trick: ', cards_played)
-
-        # print('!!!!!!!!!!! analyse minimax !!!!!!!!!!!!!')
-        # print('expected: ',self.players_cards_expected)
-        copy_expected = copy.deepcopy(self.players_cards_expected)
-        cards_to_be_removed = self.extract_cards(cards_played)
-        # remove cards already played
-        for i in cards_to_be_removed:
-            if i in self.players_cards_expected[0]:
-                self.players_cards_expected[0].remove(i)
-            if i in self.players_cards_expected[1]:
-                self.players_cards_expected[1].remove(i)
-            if i in self.players_cards_expected[2]:
-                self.players_cards_expected[2].remove(i)
-        # remove cards based on the players chosen cards
-        self.analyse_trick(cards_played, trick_winner)
-        cards = copy.deepcopy(self.players_cards_expected)
-        self.players_cards_expected = copy.deepcopy(copy_expected)
-        # print('expected: ', self.players_cards_expected)
-        # print('return: ', cards)
-        return cards
-
-    # checked
-
-    def Q_reward(self, moves_ahead, cards_played, future_trick, play_order, players_cards, my_hand):
-
-        future_rewards = []
-
-        print('&&&&&&&&&&&&&&&&& parameters Q reward &&&&&&&&&&&&&&&&&&&&&&&&&')
-        print('moves: ', moves_ahead)
-        print('cards played: ', cards_played)
-
-        print('future: ', future_trick)
-        print('play order: ', play_order)
-
-        if moves_ahead == 0:
-            # print('finnnnnnnnnnnneshed')
-            return 0
-        if future_trick:
-            # delete your card
-            # print('trick to analyse: ', cards_played)
-            # print('players card: ', players_cards)
-            players_cards = copy.deepcopy(self.analyse_minimax(cards_played, play_order[0]))
-            # print('players card after: ',players_cards)
-
-            # print('play order: ', play_order)
-            # print('my turn: ', self.my_turn(play_order))
-            # self.cards_played(cards_played,True,-1)
-            # print('players_cards: ', self.players_cards[0])
-
-            cards_played = []
-
-        # temp = copy.deepcopy(self.players_cards)
-        # print('***************************************')
-        # if not future_trick:
-        # print('cards played: ',cards_played,'    temp: ',temp)
-        # extracted_cards = self.extract_cards(cards_played,len(cards_played)-1)
-        # print('extracted: ',extracted_cards)
-        # extracted_cards.pop(len(extracted_cards)-1)
-        # print('extracted: ',extracted_cards)
-        # for i in range(len(temp)):
-        # temp[i]+=extracted_cards
-
-        # print('cards played: ', cards_played, '    temp: ', temp)
-        # print('players cards O: ', temp)
-
-        # checked first iteration
-        possible_tricks = self.play_trick(cards_played, play_order, copy.deepcopy(players_cards), my_hand)
-
-        my_turn = self.my_turn(play_order)
-
-        # print('&&&&&&&&&&&&&&&&& end play trick &&&&&&&&&&&&&&&&&&&&&&&&&&')
-        print(len(possible_tricks), 'possible tricks(): ', possible_tricks, 'moves ahead: ', moves_ahead)
-
-        # print('cards played: ', cards_played)
-        if len(possible_tricks) > 0:
-            if type(possible_tricks[0]) == list:
-                for i in range(len(possible_tricks)):
-                    play_order, winner = self.set_play_order(play_order, possible_tricks[i])
-                    # print('possible trick: ',possible_tricks[i])
-                    # print('card to remove from my hand: ', possible_tricks[i][my_turn][1])
-                    # print('my hand: ', my_hand)
-                    copy_of_my_hand = my_hand.copy()
-                    # print('copy_of_my_hand((((()))))): ', copy_of_my_hand)
-                    copy_of_my_hand.remove(possible_tricks[i][my_turn][1])
-                    # print('copy_of_my_hand((((()))))): ',copy_of_my_hand)
-                    future_rewards.append(self.Q_reward(moves_ahead - 1, possible_tricks[i], True, play_order,
-                                                        copy.deepcopy(players_cards),
-                                                        copy_of_my_hand) + self.evaluate_trick(winner))
-                # print('my hand after copy: ', self.hand)
-                # print('&&&&&&&&&&&&&&&&& end sub Q reward &&&&&&&&&&&&&&&&&&&&&&&&&&')
-            else:
-                # print('type of possible tricks: ', type(possible_tricks),' possible tricks: ', possible_tricks)
-                play_order, winner = self.set_play_order(play_order, possible_tricks)
-                # print('card to remove from my hand: ', possible_tricks[my_turn][1])
-                # print('my hand: ', self.hand)
-
-                copy_of_my_hand = my_hand.copy()
-                copy_of_my_hand.remove(possible_tricks[my_turn][1])
-                future_rewards.append(
-                    self.Q_reward(moves_ahead - 1, possible_tricks, True, play_order, copy.deepcopy(players_cards),
-                                  copy_of_my_hand) + self.evaluate_trick(winner))
-
-                # print('my hand after copy: ', self.hand)
-                # print('&&&&&&&&&&&&&&&&& end sub Q reward &&&&&&&&&&&&&&&&&&&&&&&&&&')
-
-        '''
-        if future_trick:
-            return sum(future_rewards)  #* (self.discount * moves_ahead)
-        else:
-            print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-            print('future rewards: ',future_rewards)
-            print(len(possible_tricks),'possible tricks: ',possible_tricks)
-            print('index: ',max(future_rewards))
-            print(len(cards_played),'cards: ',cards_played)
-            print('play order: ',play_order)
-            print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-            if type(possible_tricks[0])==list:
-                goal_trick = possible_tricks[future_rewards.index(max(future_rewards))]
-                #print('goal trick: ',goal_trick)
-            else:
-                goal_trick = possible_tricks
-                #print('goal trick: ',goal_trick)
-            '''
-        # print('card reward: ',cards_played)
-        # print('reward: ',sum(future_rewards)/len(future_rewards))
-        if len(future_rewards) == 0:
-            return sum(future_rewards)
-        return sum(future_rewards) / len(future_rewards)
 
     def rewards_to_string(self, actions):
         rewards_string = ''

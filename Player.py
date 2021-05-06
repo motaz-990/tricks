@@ -59,7 +59,7 @@ class Player:
             return game
 
     def set_game(self, game):
-        print('set game: ',game)
+        #print('set game: ',game)
         #print('original hand: ',self.name,' ',self.hand)
         self.game = game
         if self.game == 'tricks':
@@ -109,39 +109,20 @@ class Player:
 
 
     def play(self,cards_played,play_order,score_of_winner):
-        if self.game == 'tricks':
-            #print(self.name,'tricks playing with ',len(self.hand),' 'self.hand)
-            card = self.game_player.play(cards_played, play_order)
-            self.played_card(card)
-            #print('finished playing')
-            return card
+            print('^^^^^^^^^^^^ ',self.name,' turn ^^^^^^^^^^^^^^^')
+            if self.game == 'jack':
+                #print(self.name, 'jack playing with ', len(self.hand), ' ', self.hand)
+                just_finished, card = self.game_player.play(cards_played, play_order, score_of_winner)
+                self.played_card(card)
+                #print('finished playing')
+                return just_finished,card
+            else:
+                #print(self.name,' ', self.game,' playing with ',len(self.hand),' ',self.hand)
+                card = self.game_player.play(cards_played, play_order)
+                self.played_card(card)
+                #print('finished playing')
+                return card
 
-        elif self.game == 'diamonds':
-            print(self.name,'diamond playing with ',len(self.hand),' ',self.hand)
-            card = self.game_player.play(cards_played, play_order)
-            self.played_card(card)
-            print('finished playing')
-            return card
-
-        elif self.game == 'queens':
-            print(self.name,'queen playing with ',len(self.hand),' ',self.hand)
-            card = self.game_player.play(cards_played, play_order)
-            self.played_card(card)
-            print('finished playing')
-            return card
-
-        elif self.game == 'king':
-            print(self.name,'king playing with ',len(self.hand),' ',self.hand)
-            card = self.game_player.play(cards_played, play_order)
-            self.played_card(card)
-            print('finished playing')
-            return card
-        else:
-            print(self.name, 'jack playing with ', len(self.hand), ' ', self.hand)
-            just_finished, card = self.game_player.play(cards_played, play_order, score_of_winner)
-            self.played_card(card)
-            print('finished playing')
-            return just_finished,card
 
 
 
