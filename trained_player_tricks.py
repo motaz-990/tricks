@@ -445,7 +445,6 @@ class trained_player_tricks:
         #print(len(card),'cards after process:      ', card)
         return copy.deepcopy(card),index_player
 
-
     def analyse_trick(self,previous_trick,trick_winner):
 
         new_cards = cards()
@@ -471,7 +470,6 @@ class trained_player_tricks:
                 expected, index = self.remove_higher_cards(previous_trick[i][0], rank, suit)
                 self.players_cards_expected[index] = expected
 
-
     def number_of_cards(self):
         print('ai1 cards expected: ',len(self.players_cards_expected[0]))
         print('ai2 cards expected: ',len(self.players_cards_expected[1]))
@@ -479,6 +477,7 @@ class trained_player_tricks:
         if len(self.players_cards_expected[0])<len(self.hand) or len(self.players_cards_expected[1])<len(self.hand) or len(self.players_cards_expected[2])<len(self.hand):
             if 4>self.hand:
                 return 4
+
     def count_suits(self,cards):
         #print('cards to count: ',cards)
         suits_length = []
@@ -509,7 +508,6 @@ class trained_player_tricks:
             new_count = [first_suit_count,second_suit_count]
             new_cards = first_suit+second_suit
             return new_cards,new_count
-
 
     def choose_suit(self,cards,action,suits_count):
         if len(suits_count)== 1:
@@ -572,7 +570,6 @@ class trained_player_tricks:
             return self.state_space.get(1)
         return self.state_space.get(len(cards_played)+1)[index]
 
-
     def update_Q_table(self,state,action,reward):
         print('state: ',state)
         print('action',action)
@@ -582,7 +579,6 @@ class trained_player_tricks:
         else:
             self.Q_table[state][action] += reward - self.Q_table[state][action]
         print('updated Q table',self.Q_table)
-
 
     def moves_ahead(self):
         if len(self.hand)>2:
@@ -605,7 +601,6 @@ class trained_player_tricks:
             # self.update_Q_table(card)
             print(action)
             return card
-
 
     def add_trick(self,trick, plays, card_by_card):
         tricks = []
@@ -639,9 +634,6 @@ class trained_player_tricks:
         for i in range(len(self.players)):
             if self.players[i] == play_order[player_index]:
                 return self.players_cards[i-1]
-
-
-
 
     def minimax(self,next_turn,my_turn,suit,play_order):
         '''
@@ -729,14 +721,11 @@ class trained_player_tricks:
 
         return possible_tricks.copy()
 
-
-
     def evaluate_trick(self,winner):
         if winner == self.name:
             return -15
         else:
             return 0
-
 
     def my_turn(self,play_order):
         for i in range(len(play_order)):

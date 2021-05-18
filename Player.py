@@ -49,7 +49,7 @@ class Player:
         self.game = game
 
     def played_card(self, card):
-        for i in range (len(self.hand)) :
+        for i in range (len(self.hand)):
             if card == self.hand[i] :
                 return self.hand.pop(i)
 
