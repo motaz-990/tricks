@@ -279,7 +279,7 @@ class player_jack:
         return self.subscore
 
     # need some adjustments
-    def play(self, jack, play_order, score_of_winner):
+    def play_jack(self, jack, play_order, score_of_winner):
         just_finished = False
         if self.hand == 0:
             return just_finished, 'finished'
@@ -294,32 +294,37 @@ class player_jack:
             # allowed_suit = cards_played[0][1][0]
             allowed_up, allowed_down, playing = self.allowed_cards(jack, self.hand)
             if playing:
-                print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+
+                #print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 for i in range(len(allowed_up) + len(allowed_down)):
                     if i < len(allowed_up):
-                        print(i + 1, ': ', allowed_up[i])
-
+                        #print(i + 1, ': ', allowed_up[i])
+                        a=9
                     else:
-                        print(i + 1, ': ', allowed_down[i - len(allowed_up)])
-
+                        #print(i + 1, ': ', allowed_down[i - len(allowed_up)])
+                        a=8
                 if i == 0:
                     if len(allowed_up) > 0:
                         card = allowed_up[0]
                     else:
                         card = allowed_down[0]
                 else:
-                    print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                    print(i)
+                    #print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                    #print(i)
                     card = self.Q_table_decision(jack, allowed_up, allowed_down)
-
+                    print(self.name, ' played: ', card)
             else:
                 card = 'pass'
-            print('trained card: ', card)
+                print(self.name, ' passed the turn')
+
+            #print('trained card: ', card)
             self.played_card(card)
             if len(self.hand) == 0 and not self.finished:
-                self.update_score(score_of_winner)
+                self.update_score(score_of_winner,'')
+                print(self.name, ' finished')
                 self.finished = True
                 just_finished = True
+
             return just_finished, card
 
 
@@ -405,7 +410,7 @@ class player_jack:
                 if len(suits.get(i)) < 3:
                     self.advantages.append(suits.get(i))
 
-    def update_score(self, score):
+    def update_score(self, score,game):
 
         self.subscore += score
         self.score += score
@@ -910,7 +915,7 @@ class player_jack:
 
         state = self.current_state(jack, allowed_up, allowed_down)
         if (random.random() < self.random_action) or True:
-            print('state: ', state)
+            #print('state: ', state)
             actions = self.extract_actions(state)
             action, card = self.perform_action(allowed_up, allowed_down, actions)
             #print('check card: ', card)

@@ -2,6 +2,7 @@ from cards import cards
 import copy
 import random
 from player_tricks import player_tricks
+from human_player import human_player
 from player_diamonds import player_diamonds
 from player_queens import player_queens
 from player_king import player_king
@@ -52,29 +53,34 @@ class Player:
             game = input('enter the number of the game you would like to play: ')
             game = self.games[int(game)-1]
             self.games.remove(game)
+            self.game = game
             return game
         else:
             game = self.games[random.randrange(len(self.games))]
             self.games.remove(game)
+            self.game = game
             return game
 
     def set_game(self, game):
         #print('set game: ',game)
         #print('original hand: ',self.name,' ',self.hand)
         self.game = game
-        if self.game == 'tricks':
-            self.game_player = player_tricks(self.name, self.human)
-
-        elif self.game == 'diamonds':
-            self.game_player = player_diamonds(self.name, self.human)
-
-        elif self.game == 'queens':
-            self.game_player = player_queens(self.name, self.human)
-
-        elif self.game == 'king':
-            self.game_player = player_king(self.name, self.human)
+        if self.human:
+            self.game_player = human_player(self.name)
         else:
-            self.game_player = player_jack(self.name, self.human)
+            if self.game == 'tricks':
+                self.game_player = player_tricks(self.name, not self.human)
+
+            elif self.game == 'diamonds':
+                self.game_player = player_diamonds(self.name, not self.human)
+
+            elif self.game == 'queens':
+                self.game_player = player_queens(self.name, not self.human)
+
+            elif self.game == 'king':
+                self.game_player = player_king(self.name, not self.human)
+            else:
+                self.game_player = player_jack(self.name, not self.human)
 
 
         self.game_player.receive_cards(self.hand)
@@ -112,7 +118,7 @@ class Player:
             print('^^^^^^^^^^^^ ',self.name,' turn ^^^^^^^^^^^^^^^')
             if self.game == 'jack':
                 #print(self.name, 'jack playing with ', len(self.hand), ' ', self.hand)
-                just_finished, card = self.game_player.play(cards_played, play_order, score_of_winner)
+                just_finished, card = self.game_player.play_jack(cards_played, play_order, score_of_winner)
                 self.played_card(card)
                 #print('finished playing')
                 return just_finished,card
@@ -130,8 +136,8 @@ class Player:
 
 
     def update_score(self,trick):
-
-        self.game_player.update_score(trick)
+        print(self.name)
+        self.game_player.update_score(trick,self.game)
         '''
         if self.game == 'tricks':
             self.subscore -= 15

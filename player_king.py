@@ -308,32 +308,32 @@ class player_king:
             if len(cards_played) > 0:
                 allowed_suit = cards_played[0][1][0]
                 allowed, match = self.allowed_cards(allowed_suit, self.hand)
-                print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                print('      your hand     ', '        allowed cards ')
-                for i in range(len(self.hand)):
-                    if i < len(allowed):
-                        print(i + 1, ': ', self.hand[i], '   ', i + 1, ': ', allowed[i])
-                    else:
-                        print(i + 1, ': ', self.hand[i])
-                print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                #print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                #print('      your hand     ', '        allowed cards ')
+                #for i in range(len(self.hand)):
+                    #if i < len(allowed):
+                        #print(i + 1, ': ', self.hand[i], '   ', i + 1, ': ', allowed[i])
+                    #else:
+                        #print(i + 1, ': ', self.hand[i])
+                #print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 
                 card = self.Q_table_decision(cards_played, allowed, match)
 
-                print('trained card: ', card)
+                #print('trained card: ', card)
                 #print('hand before play',self.hand)
                 return self.played_card(card)
 
 
             else:
-                print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                for i in range(len(self.hand)):
-                    print(i + 1, ': ', self.hand[i])
-                print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                #print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                #for i in range(len(self.hand)):
+                    #print(i + 1, ': ', self.hand[i])
+                #print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 # allowed = self.allowed_cards(cards_played[1][0])
                 # print(allowed)
                 card = self.Q_table_decision(cards_played.copy(), self.hand, True)
-                print(self.name,' card: ', card)
-                print('hand before play', self.hand)
+                #print(self.name,' card: ', card)
+                #print('hand before play', self.hand)
                 return self.played_card(card)
         else:
             if len(cards_played) > 0:
@@ -450,7 +450,7 @@ class player_king:
                 if len(suits.get(i)) <3:
                     self.advantages.append(suits.get(i))
 
-    def update_score(self, trick):
+    def update_score(self, trick,game):
 
         if self.contains_king(trick):
                 self.subscore -= 75
@@ -1170,7 +1170,7 @@ class player_king:
         update_Qtable = True
         state,suits_eval = self.current_state(cards_played, allowed_cards, match)
         if True or (random.random() < self.random_action):
-            print('state: ',state)
+            #print('state: ',state)
             if state[0:5] == 'first':
                 # print('yes it is first: ',action)
                 update_Qtable,action, card = self.perform_action_first(suits_eval,self.hand)

@@ -48,14 +48,12 @@ class player_tricks:
         self.state_space_length = 12
         #actions: 'low_card', 'mid_card','high_card'
         self.action_space =['low_card','mid_card' ,'high_card']
-        self.action_space_first =  ['few strong low_card', 'few strong mid_card', 'few strong high_card',
-                                    'few weak low_card', 'few weak mid_card', 'few weak high_card',
-                                    'mid strong low_card', 'mid strong mid_card', 'mid strong high_card',
-                                    'mid weak low_card', 'mid weak mid_card', 'mid weak high_card',
-                                    'lot strong low_card', 'lot strong mid_card', 'lot strong high_card',
-                                    'lot weak low_card', 'lot weak mid_card', 'lot weak high_card']
-
-
+        self.action_space_first = ['few strong low_card','few strong mid_card','few strong high_card',
+                                   'few weak low_card','few weak mid_card','few weak high_card',
+                                   'mid strong low_card','mid strong mid_card','mid strong high_card',
+                                   'mid weak low_card','mid weak mid_card','mid weak high_card',
+                                   'lot strong low_card','lot strong mid_card','lot strong high_card',
+                                   'lot weak low_card','lot weak mid_card','lot weak high_card']
         if self.name == 'Motaz':
             self.Q_table= self.create_Q_table()
             #print('hi I am tricks player')
@@ -199,7 +197,7 @@ class player_tricks:
         self.hand = sorted_hand.copy()
         #print('sorted hand: ',self.hand)
 
-        print(self.name,'cards: ',self.hand)
+        #print(self.name,'cards: ',self.hand)
         #print(len(cards), ' cards: ', cards)
         self.reset_cards_left()
         #checked
@@ -229,7 +227,6 @@ class player_tricks:
 
                 allowed_suit = cards_played[0][1][0]
                 allowed ,match = self.allowed_cards(allowed_suit,self.hand)
-                '''
                 print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 print('      your hand     ', '        allowed cards ')
                 for i in range(len(self.hand)):
@@ -238,24 +235,22 @@ class player_tricks:
                     else:
                         print(i + 1, ': ', self.hand[i])
                 print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-'''
+
                 card = self.Q_table_decision(cards_played,allowed,match)
-                #print('^^^^^^^^^^^^^^^^^^^^ end q decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                #print('trained card: ',card)
+                print('^^^^^^^^^^^^^^^^^^^^ end q decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                print('trained card: ',card)
                 return self.played_card(card)
 
 
             else:
-                '''
                 print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 for i in range(len(self.hand)):
                     print(i + 1, ': ', self.hand[i])
                 print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                '''
                 # allowed = self.allowed_cards(cards_played[1][0])
                 # print(allowed)
                 card = self.Q_table_decision(cards_played.copy(),self.hand,True)
-                #print('trained card: ', card)
+                print('trained card: ', card)
                 return self.played_card(card)
         else:
 
@@ -292,7 +287,7 @@ class player_tricks:
         return [0,1,2],True
 
 
-    def update_score(self,trick,game):
+    def update_score(self,trick):
 
         self.subscore -= 15
         self.score -= 15
@@ -730,7 +725,14 @@ class player_tricks:
         return False
 
 
-
+        '''
+        for i in range(len(my_cards)):
+            if my_cards[i][0][0]==suit:
+                if len(my_cards[i])== self.suits_left(suit):
+                    return True
+                else:
+                    return False
+'''
 
 
     def suits_evaluation(self):
@@ -784,7 +786,7 @@ class player_tricks:
                 return card
 
             actions, update_Qtable = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
-            print('actions: ', actions ,'  update: ',update_Qtable)
+            #print('actions: ', actions ,'  update: ',update_Qtable)
             action = actions[random.randrange(len(actions))]
             card = self.perform_action(cards_played, allowed_cards, action, match)
             self.random_action -= 0.1

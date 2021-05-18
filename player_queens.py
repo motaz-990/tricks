@@ -312,6 +312,7 @@ class player_queens:
 
                 allowed_suit = cards_played[0][1][0]
                 allowed, match = self.allowed_cards(allowed_suit, self.hand)
+                '''
                 print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 print('      your hand     ','        allowed cards ')
                 for i in range(len(self.hand)):
@@ -320,18 +321,20 @@ class player_queens:
                     else:
                         print(i + 1, ': ', self.hand[i])
                 print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-
+'''
                 card = self.Q_table_decision(cards_played, allowed, match)
                 #print('^^^^^^^^^^^^^^^^^^^^ end q decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                print('trained card: ', card)
+                #print('trained card: ', card)
                 return self.played_card(card)
 
 
             else:
+                '''
                 print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 for i in range(len(self.hand)):
                     print(i + 1, ': ', self.hand[i])
                 print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                '''
                 # allowed = self.allowed_cards(cards_played[1][0])
                 # print(allowed)
                 card = self.Q_table_decision(cards_played.copy(), self.hand, True)
@@ -432,7 +435,7 @@ class player_queens:
                 if len(suits.get(i)) <3:
                     self.advantages.append(suits.get(i))
 
-    def update_score(self, trick):
+    def update_score(self, trick,game):
 
         trick_score = 0
         for i in trick:
@@ -1231,7 +1234,7 @@ class player_queens:
         update_Qtable = True
         state,suits_eval = self.current_state(cards_played, allowed_cards, match)
         if True or (random.random() < self.random_action):
-            print('state: ',state)
+            #print('state: ',state)
             if state[0:5] == 'first':
                 # print('yes it is first: ',action)
                 update_Qtable,action, card = self.perform_action_first(suits_eval,self.hand)

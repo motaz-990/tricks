@@ -24,8 +24,8 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 1
-sub_games_left = 1
+games_left = 5
+sub_games_left = 5
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
@@ -36,7 +36,6 @@ jack = [up_cards,down_cards]
 cards_left = 52
 score_of_winner = 200
 
-diamondBroken = False
 
 
 def first_kingdom(players):
@@ -68,7 +67,8 @@ def deal_cards(players, cards):
 
 
 def choose_game():
-    #print(kingdoms_order[0].games)
+    print('kingdoms order: ',order_of_play)
+    print('king: ', order_of_play[0])
     game = kingdoms_order[0].choose_game()
     for i in range(len(kingdoms_order)):
         kingdoms_order[i].set_game(game)
@@ -87,13 +87,15 @@ def play():
     # trick_winner(cards_played)
 
     for i in range(len(players_order)):
-        players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
+        if not players_order[i].human:
+            players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
     print('$$$$$$$ cards played $$$$$$$$$$$ : ',cards_played)
 
 
     winner = trick_winner(cards_played)
     finish = False
     if players[0].game == 'king':
+        #print('finished king: ',players[0])
         finish = players[0].contains_king(cards_played)
 
     return cards_played,winner,finish
@@ -120,10 +122,10 @@ def update_score(trick_winner,trick):
 
 def update_jack(player,card,cards_left):
     card_obj = cards()
-    print('up: ',up_cards)
-    print('down: ',down_cards)
-    print(player,' played: ',card)
-    print('card: ',card)
+    #print('up: ',up_cards)
+    #print('down: ',down_cards)
+    #print(player,' played: ',card)
+    #print('card: ',card)
     if type(card)!= str:
         index = suits.index(card[0])
         if card_obj.get_rank(card[1])>10:
@@ -149,16 +151,16 @@ def end_subgame():
         scores[i] = players[i].get_score()
     print('subscores   : ', subscores)
     print('scores      : ', scores)
+    input('finished the subgame, press enter to proceed: ')
 
     if len(kingdoms_order[0].games) == 0:
         kingdoms_order.append(kingdoms_order.pop(0))
         print()
         input('############# kingdom finished ######################')
+        print('############# next kingdom  ######################')
         print()
+        input('finished the kingdom, press enter to proceed: ')
 
-    print()
-    print('############# next kingdom  ######################')
-    print()
     return True
 
 
@@ -191,7 +193,7 @@ while not end_game:
             first_game = False
 
         choose_game()
-        print('################ game has been choosen to be: ', players[0].game, ' #########################')
+        print('################ the game has been chosen to be: ', players[0].game, ' #########################')
 
     else:
         print()
@@ -208,6 +210,7 @@ while not end_game:
                 games_left -= 1
                 end_game = games_left == 0
         else:
+            print('################ kingdom: ', 4-int((sub_games_left-1)/5))
             print('################ start of trick: ', counter_tricks, '################ ')
             counter_tricks += 1
             cards_played,winner,finish = play()
