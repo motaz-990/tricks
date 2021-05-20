@@ -156,10 +156,9 @@ class tricks_player:
         return allowed,match
 
     def receive_cards(self, cards):
+        #print(len(cards),'cards : ',cards)
         self.hand.clear()
-
-        while len(cards) > 0 and len(self.hand) < 13:
-            self.hand.append(cards.pop())
+        self.hand = cards
 
         sorted_hand = []
         hearts = []
@@ -181,9 +180,6 @@ class tricks_player:
 
         self.hand = sorted_hand.copy()
         #print('sorted hand: ',self.hand)
-
-
-
 
         print(self.name,'cards: ',self.hand)
         #print(len(cards), ' cards: ', cards)
@@ -208,29 +204,29 @@ class tricks_player:
 
             # print('your cards: ', self.hand)
         if len(cards_played) > 0:
-            print('------------------------')
+            #print('------------------------')
             allowed_suit = cards_played[0][1][0]
             allowed ,match = self.allowed_cards(allowed_suit,self.hand)
-            print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-            for i in range(len(allowed)):
-                print(i + 1, ': ', allowed[i])
-            print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+            #print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+            #for i in range(len(allowed)):
+                #print(i + 1, ': ', allowed[i])
+            #print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 
             card = self.Q_table_decision(cards_played,allowed,match)
-            print('^^^^^^^^^^^^^^^^^^^^ end q decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-            print('trained card: ',card)
+            #print('^^^^^^^^^^^^^^^^^^^^ end q decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+            #print('trained card: ',card)
             return self.played_card(card)
 
 
         else:
-            print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-            for i in range(len(self.hand)):
-                print(i + 1, ': ', self.hand[i])
-            print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+            #print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+            #for i in range(len(self.hand)):
+                #print(i + 1, ': ', self.hand[i])
+            #print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 # allowed = self.allowed_cards(cards_played[1][0])
                 # print(allowed)
             card = self.Q_table_decision(cards_played.copy(),self.hand,True)
-            print('trained card: ', card)
+            #print('trained card: ', card)
             return self.played_card(card)
 
 
@@ -270,34 +266,15 @@ class tricks_player:
 
         self.subscore -= 15
         self.score -= 15
-        '''
-        if self.game == 'tricks':
-            self.subscore -= 15
-            self.score -= 15
 
-        elif self.game == 'diamond':
-            self.subscore -= 15
-            self.score -= 15
 
-        elif self.game == 'king of hearts':
-            self.subscore -= 15
-            self.score -= 15
-
-        elif self.game == 'queens':
-            self.subscore -= 15
-            self.score -= 15
-
-        elif self.game == 'jack':
-            self.subscore -= 15
-            self.score -= 15
-        '''
 
     def min_card(self, allowed_cards,first,max):
         card_obj = cards()
 
         if first:
             max = 5
-        print(max)
+        #print(max)
         card = allowed_cards[0]
         min_rank = card_obj.get_rank(card[1])
         found_lower_than_max = min_rank<max
@@ -438,9 +415,9 @@ class tricks_player:
                 self.players_cards_expected[index] = expected
 
     def number_of_cards(self):
-        print('ai1 cards expected: ',len(self.players_cards_expected[0]))
-        print('ai2 cards expected: ',len(self.players_cards_expected[1]))
-        print('ai3 cards expected: ',len(self.players_cards_expected[2]))
+        #print('ai1 cards expected: ',len(self.players_cards_expected[0]))
+        #print('ai2 cards expected: ',len(self.players_cards_expected[1]))
+        #print('ai3 cards expected: ',len(self.players_cards_expected[2]))
         if len(self.players_cards_expected[0])<len(self.hand) or len(self.players_cards_expected[1])<len(self.hand) or len(self.players_cards_expected[2])<len(self.hand):
             if 4>self.hand:
                 return 4
@@ -548,7 +525,7 @@ class tricks_player:
                 list_indexes.pop(i - counter)
                 counter += 1
 
-        #print('index: ', list_indexes)
+        #print('indexes: ', list_indexes)
         return list_indexes
 
     def check_valid_number_cards(self,word,suits_count):
@@ -559,17 +536,17 @@ class tricks_player:
         return True
 
     def check_valid_strongness(self,word,allowed_cards):
-        print('word: ',word)
-        print('allowed: ',allowed_cards)
+        #print('word: ',word)
+        #print('allowed: ',allowed_cards)
         if not self.free_suit(allowed_cards[0][0]):
             evaluation = self.evaluate_suit(allowed_cards)
-            print('evaluation: ',evaluation)
+            #print('evaluation: ',evaluation)
             return word == self.strongness.get(evaluation[1])
         return False
 
     def check_valid_rank_action(self,word,allowed_cards):
-        print('word: ', word)
-        print('allowed: ', allowed_cards)
+        #print('word: ', word)
+        #print('allowed: ', allowed_cards)
         if word == 'mid_card':
             return len(allowed_cards)>2
         if word == 'high_card':
@@ -577,26 +554,25 @@ class tricks_player:
         return True
 
     def play_good_card(self,allowed_cards):
-        print('check please')
+        #print('check please')
         for i in allowed_cards:
             if not self.free_suit(i[0]):
                 return i
-        print('you only have free suit')
+        #print('you only have free suit')
         return allowed_cards[0]
 
-
     def valid_actions_first(self):
-        print('&&&&&&&&&&&& valid first &&&&&&&&&&&&&&&&&&')
-        print('my hand before: ', self.hand)
+        #print('&&&&&&&&&&&& valid first &&&&&&&&&&&&&&&&&&')
+        #print('my hand before: ', self.hand)
         list_indexes = self.action_indexes_first.copy()
         suits_count = self.count_suits(self.hand)
-        print('suits count: ',suits_count)
+        #print('suits count: ',suits_count)
         if len(suits_count) == 1:
             self.keep_valid_actions(list_indexes,'lot')
 
             return -1, self.perform_action([], self.hand, 1, True)
         if number_of_cards_action == 1 and len(suits_count) < 3:
-            print(' count: ', suits_count)
+            #print(' count: ', suits_count)
             change = 6 - 12 * random.randrange(1)
             new_action = (action - change) % len(self.action_space_first)
             return self.perform_action_first(new_action, self.hand)
@@ -605,10 +581,10 @@ class tricks_player:
 
         if len(allowed_cards) == 1:
             return -1, allowed_cards[0]
-        print('my hand after: ', allowed_cards)
+        #print('my hand after: ', allowed_cards)
         strong = int(action / 3) % 2 == 0
         rank = action % 3
-        print('cards action: ', number_of_cards_action, '   strong: ', strong, '   rank: ', action % 3)
+        #print('cards action: ', number_of_cards_action, '   strong: ', strong, '   rank: ', action % 3)
         if not self.free_suit(allowed_cards[0][0]) and strong == self.evaluate_suit(allowed_cards):
             return action, self.perform_action([], allowed_cards, rank, True)
         else:
@@ -619,64 +595,51 @@ class tricks_player:
             return action, self.perform_action([], allowed_cards, rank, True)
 
 
-
-        pass
-
     def perform_action_first(self,actions,allowed_cards):
         if len(actions) == 0:
             return self.play_good_card(allowed_cards)
-        print('&&&&&&&&&&&& perform_action first &&&&&&&&&&&&&&&&&&')
-        print('my cards: ', allowed_cards)
-        print('actions: ', actions)
+        #print('&&&&&&&&&&&& perform_action first &&&&&&&&&&&&&&&&&&')
+        #print('my cards: ', allowed_cards)
+        #print('actions: ', actions)
         action = actions[0]
         valid_actions = []
         for i in range(len(actions)):
             valid_actions.append(i)
-        print('valid actions: ',valid_actions)
-        print(self.action_space_first[action])
+        #print('valid actions: ',valid_actions)
+        #print(self.action_space_first[action])
         number_of_cards_action = int((action - 1) / 6)
         number_of_cards_word = self.number_of_cards_actions[number_of_cards_action]
-        print('number of cards word: ',number_of_cards_word)
+        #print('number of cards word: ',number_of_cards_word)
         strong = int(action / 3) % 2 == 0
         strong_word = self.strongness.get(strong)
-        print('strong word: ',strong_word)
+        #print('strong word: ',strong_word)
         rank = action % 3
         rank_word = self.action_space[rank]
-        print('rank word: ',rank_word)
-        print('number of cards action: ', number_of_cards_action)
-        print('my hand before: ', allowed_cards)
+        #print('rank word: ',rank_word)
+        #print('number of cards action: ', number_of_cards_action)
+        #print('my hand before: ', allowed_cards)
         suits_count = self.count_suits(allowed_cards)
-        if not self.check_valid_number_cards(number_of_cards_word,suits_count):
-            actions.pop(0)
-            return self.perform_action_first(actions,allowed_cards)
 
-        print('valid number of cards')
-        print('** suits count ** : ',suits_count)
+        #print('valid number of cards')
+        #print('** suits count ** : ',suits_count)
         suit_to_play = self.choose_suit(allowed_cards, number_of_cards_action, suits_count)
-        print('allowed: ',allowed_cards)
+
 
         if not self.check_valid_strongness(strong_word,suit_to_play):
             actions.pop(0)
             return self.perform_action_first(actions, allowed_cards)
-        print('valid strongness ')
+        #print('valid strongness ')
 
         if not self.check_valid_rank_action(rank_word,suit_to_play):
             actions.pop(0)
             return self.perform_action_first(actions, allowed_cards)
 
-        print('valid rank')
+        #print('valid rank')
+        #print('rank: ',rank)
+        #print('allowed: ',suit_to_play)
 
-        return self.perform_action([],allowed_cards,rank,True)
+        return self.perform_action([],suit_to_play,rank,True)
 
-
-
-
-
-
-
-
-
-        #checked might require considering the case of performing different action than desired
 
     def perform_action (self,cards_played,allowed_cards,action,match):
         #print('cards played: ',cards_played)
@@ -706,7 +669,7 @@ class tricks_player:
                 return self.mid_card(allowed_cards, True, 0)
             #print('midddd')
             return self.mid_card(allowed_cards,False,self.highest_card_played(cards_played))
-        else :
+        else:
 
             #print('the max card: ',self.max_card(allowed_cards))
             return self.max_card(allowed_cards)
@@ -744,8 +707,7 @@ class tricks_player:
         return True
 
     def evaluate_suit(self,my_cards):
-        print('####### evalutae ##########')
-        print('my cards: ',my_cards)
+        #print('####### evalutae ##########')
         suit = my_cards[0][0]
         number_of_my_cards = len(my_cards)
         temp = []
@@ -780,14 +742,14 @@ class tricks_player:
         #if number_of_cards_to_check >3:
             #number_of_cards_to_check = 3
         counter = 0
-        print('cards to check: ',number_of_cards_to_check)
+        #print('cards to check: ',number_of_cards_to_check)
         for i in range(number_of_cards_to_check):
             my_rank = card_obj.get_rank(my_cards[i][1])
-            print('rank: ',my_rank)
+            #print('rank: ',my_rank)
             for j in range(limit):
-                if i*limit + j < len(cards_left):
+                if i*limit + j < len(cards_left) and counter < 2:
                     rank_to_compare = card_obj.get_rank(cards_left[i*limit+j][1])
-                    print('rank to compare: ', rank_to_compare)
+                    #print('rank to compare: ', rank_to_compare)
                     if rank_to_compare > my_rank:
                         found = True
                         #print('rank to compare: ',rank_to_compare)
@@ -796,11 +758,11 @@ class tricks_player:
                 else:
                     found = True
                     break
-            print()
+            #print()
             if not found:
                 strong = found
                 break
-        print('strong: ',strong)
+        #print('strong: ',strong)
 
 
         return(my_cards[0][0],strong)
@@ -812,19 +774,11 @@ class tricks_player:
 
     def free_suit(self, suit):
         if len(self.suits_left(suit)) == 0:
-            print('free suit')
+            #print('free suit')
             return True
         return False
 
 
-        '''
-        for i in range(len(my_cards)):
-            if my_cards[i][0][0]==suit:
-                if len(my_cards[i])== self.suits_left(suit):
-                    return True
-                else:
-                    return False
-'''
 
     def suits_evaluation(self):
         evaluation = []
@@ -833,7 +787,9 @@ class tricks_player:
             evaluation.append(self.evaluate_suit(my_cards[0]))
 
     def state_of_the_game(self,tricks_left):
-        return int(tricks_left/5.25)
+        if tricks_left == 13:
+            return 2
+        return int(tricks_left / 4)
 
     def current_state (self, cards_played,allowed_cards,match):
 
@@ -841,28 +797,28 @@ class tricks_player:
         #print(len(allowed_cards),'allwed cards: ',allowed_cards)
         if len(cards_played) == 0:
             state_of_the_game = self.state_of_the_game(len(self.hand))
-            print('state:     ',self.state_space.get(1).get(state_of_the_game))
+            #print('state:     ',self.state_space.get(1).get(state_of_the_game))
             return self.state_space.get(1).get(state_of_the_game)
         if match:
             highest = self.highest_card_played(cards_played)
             majority_less = self.majority_less(highest, allowed_cards)
             #print('majority less: ',majority_less)
-            print('state:     ', self.state_space.get(len(cards_played) + 1).get(match).get(majority_less))
+            #print('state:     ', self.state_space.get(len(cards_played) + 1).get(match).get(majority_less))
             return self.state_space.get(len(cards_played) + 1).get(match).get(majority_less)
 
-        print('state:     ', self.state_space.get(len(cards_played)+1).get(match))
+        #print('state:     ', self.state_space.get(len(cards_played)+1).get(match))
         return self.state_space.get(len(cards_played)+1).get(match)
 
     def update_Q_table(self,state,action,reward):
-        print('state: ',state)
-        print('action',action)
-        print('Q table: ',self.Q_table)
-        print('state before: ', self.Q_table[self.states_list.index(state)][action])
+        #print('state: ',state)
+        #print('action',action)
+        #print('Q table: ',self.Q_table)
+        #print('state before: ', self.Q_table[self.states_list.index(state)][action])
         if self.Q_table[self.states_list.index(state)][action] == 0:
             self.Q_table[self.states_list.index(state)][action] = reward
         else:
             self.Q_table[self.states_list.index(state)][action] += reward - self.Q_table[self.states_list.index(state)][action]
-        print('updated state: ', self.Q_table[self.states_list.index(state)][action])
+        #print('updated state: ', self.Q_table[self.states_list.index(state)][action])
 
     def moves_ahead(self):
         #if self.temp:
@@ -898,29 +854,28 @@ class tricks_player:
         for i in range(len(possible_actions)):
 
             indexes.append(temp_actions.index(possible_actions[-(i+1)]))
-        print('indexes: ',indexes)
+        #print('indexes: ',indexes)
         return indexes
 
 
     def Q_table_decision(self,cards_played, allowed_cards,match):
         state = self.current_state(cards_played,allowed_cards, match)
-        print('returned state: ',state)
-        print('actions for state: ',self.Q_table[self.states_list.index(state)])
-        print('index: ',self.states_list.index(state))
+        #print('returned state: ',state)
+        #print('actions for state: ',self.Q_table[self.states_list.index(state)])
+        #print('index: ',self.states_list.index(state))
         if state[0:5] == 'first':
             actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
 
-        #print('yes it is first: ',action)
             card = self.perform_action_first(actions,self.hand.copy())
 
-            print('card first: ', card)
+            #print('card first: ', card)
 
             return card
         actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
         actions  = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
-        print('actions: ', actions )
+        #print('actions: ', actions )
         action = self.best_action(actions,self.Q_table[self.states_list.index(state)].copy())
-        print('best action: ',action)
+        #print('best action: ',action)
         card = self.perform_action(cards_played, allowed_cards, action, match)
 
         return card
@@ -1098,15 +1053,15 @@ class tricks_player:
     # checked minimax first iteration
 
     def check_trick(self,trick):
-        print('trick to check: ',trick)
+        #print('trick to check: ',trick)
         temp = any(player in trick for player in self.players)
-        print('temp: ',temp)
+        #print('temp: ',temp)
         return not temp
 
     def possible_trick(self ,possible_trick):
         trick = []
 
-        print('test: ',possible_trick)
+        #print('test: ',possible_trick)
         for i in range(len(possible_trick)):
             if possible_trick[i] == list:
                 for j in range(len(possible_trick[i])):
@@ -1114,7 +1069,7 @@ class tricks_player:
                         trick.append(possible_trick[i][j])
             elif possible_trick[i] == tuple:
                 trick.append(possible_trick[i])
-        print('returned: ',trick)
+        #print('returned: ',trick)
         return trick
 
 
@@ -1122,11 +1077,11 @@ class tricks_player:
     def play_trick(self,cards_played,play_order,players_cards,my_hand):
 
 
-        print()
-        print('&&&&&&&&&&&&&&&&& parameters play trick &&&&&&&&&&&&&&&&&&&&&&&&&')
-        print('cards played: ', cards_played)
-        print('play order: ', play_order)
-        print('players cards: ',players_cards)
+        #print()
+        #print('&&&&&&&&&&&&&&&&& parameters play trick &&&&&&&&&&&&&&&&&&&&&&&&&')
+        #print('cards played: ', cards_played)
+        #print('play order: ', play_order)
+        #print('players cards: ',players_cards)
 
         suit = 'free'
         if len(cards_played) > 0:
@@ -1134,11 +1089,11 @@ class tricks_player:
             players_cards = self.remove_minimax_cards(players_cards,cards_played)
 
 
-        print('suit: ',suit)
-        print('my cards: ',my_hand)
-        print(len(players_cards[0]),'cards left to play: ',players_cards[0])
-        print(len(players_cards[1]), 'cards left to play: ', players_cards[1])
-        print(len(players_cards[2]), 'cards left to play: ', players_cards[2])
+        #print('suit: ',suit)
+        #print('my cards: ',my_hand)
+        #print(len(players_cards[0]),'cards left to play: ',players_cards[0])
+        #print(len(players_cards[1]), 'cards left to play: ', players_cards[1])
+        #print(len(players_cards[2]), 'cards left to play: ', players_cards[2])
 
 
         possible_tricks = self.minimax(len(cards_played),self.my_turn(play_order),suit,play_order,copy.deepcopy(players_cards),my_hand.copy())
@@ -1246,12 +1201,12 @@ class tricks_player:
 
         future_rewards = []
 
-        print('&&&&&&&&&&&&&&&&& parameters Q reward &&&&&&&&&&&&&&&&&&&&&&&&&')
-        print('moves: ',moves_ahead)
-        print('cards played: ', cards_played)
+        #print('&&&&&&&&&&&&&&&&& parameters Q reward &&&&&&&&&&&&&&&&&&&&&&&&&')
+        #print('moves: ',moves_ahead)
+        #print('cards played: ', cards_played)
 
-        print('future: ', future_trick)
-        print('play order: ', play_order)
+        #print('future: ', future_trick)
+        #print('play order: ', play_order)
 
         if moves_ahead == 0:
             #print('finnnnnnnnnnnneshed')
@@ -1292,7 +1247,7 @@ class tricks_player:
         my_turn = self.my_turn(play_order)
 
         #print('&&&&&&&&&&&&&&&&& end play trick &&&&&&&&&&&&&&&&&&&&&&&&&&')
-        print(len(possible_tricks),'possible tricks(): ',possible_tricks, 'moves ahead: ',moves_ahead)
+        #print(len(possible_tricks),'possible tricks(): ',possible_tricks, 'moves ahead: ',moves_ahead)
 
         #print('cards played: ', cards_played)
         if len(possible_tricks) > 0:

@@ -130,51 +130,7 @@ class Player:
                 return card
 
 
-
-
-
-
-
     def update_score(self,trick):
         print(self.name)
         self.game_player.update_score(trick,self.game)
-        '''
-        if self.game == 'tricks':
-            self.subscore -= 15
-            self.score -= 15
-
-        elif self.game == 'diamond':
-            self.subscore -= 15
-            self.score -= 15
-
-        elif self.game == 'king of hearts':
-            self.subscore -= 15
-            self.score -= 15
-
-        elif self.game == 'queens':
-            self.subscore -= 15
-            self.score -= 15
-
-        elif self.game == 'jack':
-            self.subscore -= 15
-            self.score -= 15
-        '''
-
-def diamond_play(self):
-    pass
-
-def tricks_play(self):
-    pass
-
-def king_play(self):
-    pass
-
-
-def queen_play(self):
-
-    pass
-
-
-def jack_play(self):
-    pass
 

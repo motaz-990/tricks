@@ -3,19 +3,19 @@ from Player import Player
 import random
 
 print('welcom to Tricks')
-
+player_name = input('enter your name: ')
 deck = cards()
 
 # def __init__(self, name, score, hand, game,human):
 
-player = Player('Motaz', True)
-ai1 = Player('ai1', False)
-ai2 = Player('ai2', False)
-ai3 = Player('ai3', False)
+player = Player(player_name, True)
+ai1 = Player('Motaz', False)
+ai2 = Player('Tameem', False)
+ai3 = Player('Omar', False)
 players = [player, ai1, ai2, ai3]
 kingdoms_order = [player, ai1, ai2, ai3]
 players_order = []
-order_of_play = ['Motaz','ai1','ai2','ai3']
+order_of_play = [player_name,'Motaz','Tameem','Omar']
 
 
 end_game = False
@@ -24,8 +24,8 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 5
-sub_games_left = 5
+games_left = 20
+sub_games_left = 20
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
@@ -35,7 +35,72 @@ down_cards = [' ',' ',' ',' ']
 jack = [up_cards,down_cards]
 cards_left = 52
 score_of_winner = 200
+new_player = True
 
+
+
+def add_new_player(name):
+    #print('add new player')
+    f = open("players.txt", "a")
+    line = name+': 0P(0), 1M(0), 2T(0), 3O(0) \n'
+    f.write(line)
+    f.close()
+
+
+def players_names(name):
+    #print('players names')
+    f = open("players.txt", "r")
+    content = (f.readlines())
+    #print('content: ', content)
+
+    exist = False
+    name = name+':'
+    for i in content:
+        if name in i:
+            exist = True
+    if exist:
+        new_player = input('is this the first time you play? enter [Y/N]: ')
+        if new_player == 'Y' or new_player == 'y':
+            last_name = input('enter your last name: ')
+            name = name+' '+last_name
+            add_new_player(name)
+    else:
+        add_new_player(name)
+
+    return name
+
+def update_winner(name,winner):
+
+    #print('############# update winner #################')
+    f = open("players.txt", "r")
+    content = (f.readlines())
+    #print('content: ', content)
+    f = open("players.txt", "w")
+    name = name+':'
+    line_to_write = ''
+    for i in range(len(content)):
+        #print('name: ',name)
+        #print('content[i]: ',content[i])
+        if name in content[i]:
+            original_line = content[i]
+            print('original_line: ',original_line)
+            first_part = original_line[:original_line.index(winner)+3]
+            print('first_part: ', first_part)
+            original_line = original_line[len(first_part):]
+
+            wins = original_line[:original_line.index(')')]
+            print('wins: ',wins)
+            updated_wins = int(wins)+1
+
+            content[i] = first_part+str(updated_wins)+original_line[len(wins):]
+        line_to_write+= content[i]
+    #print(line_to_write)
+    f.write(line_to_write)
+    f.close()
+
+
+
+player_name = players_names(player_name)
 
 
 def first_kingdom(players):
@@ -70,8 +135,13 @@ def choose_game():
     print('kingdoms order: ',order_of_play)
     print('king: ', order_of_play[0])
     game = kingdoms_order[0].choose_game()
+
+    '''
+    ["tricks", "diamonds", "queens", "king", "jack"]
+    copy the game you want from line 75 and paste it in line 78
+    '''
     for i in range(len(kingdoms_order)):
-        kingdoms_order[i].set_game(game)
+        kingdoms_order[i].set_game('tricks')
 
 
 
@@ -90,6 +160,8 @@ def play():
         if not players_order[i].human:
             players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
     print('$$$$$$$ cards played $$$$$$$$$$$ : ',cards_played)
+    input('press enter to proceed: ')
+
 
 
     winner = trick_winner(cards_played)
@@ -141,6 +213,19 @@ def update_jack(player,card,cards_left):
     jack[1] = down_cards
     return cards_left
 
+def update_wins(scores):
+    #winner = players[scores.index(max(scores))].name
+    winner = scores.index(max(scores))
+    temp = scores.copy()
+    temp.pop(winner)
+    winner2 = temp.index(max(temp))
+    if scores[winner2] == scores[winner]:
+        winner = winner2+1
+
+    #print('scores check: ',scores)
+    #print(player_name,' updates: ', order_of_play[winner])
+
+    update_winner(player_name,str(winner))
 
 
 def end_subgame():
@@ -151,8 +236,9 @@ def end_subgame():
         scores[i] = players[i].get_score()
     print('subscores   : ', subscores)
     print('scores      : ', scores)
-    input('finished the subgame, press enter to proceed: ')
 
+    update_wins(subscores)
+    input('finished the subgame, press enter to proceed: ')
     if len(kingdoms_order[0].games) == 0:
         kingdoms_order.append(kingdoms_order.pop(0))
         print()
@@ -231,5 +317,19 @@ while not end_game:
         print('scores: ',scores)
         winner = players[scores.index(max(scores))].name
         print('the winner is: ', winner)
-        print("would you like to play another game?")
+        print('Thanks for playing the game!!!!')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
