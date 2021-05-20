@@ -1438,7 +1438,7 @@ class trained_player_diamonds:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("Q tables.txt", "r")
+        f = open("diamonds tables.txt", "r")
         content = self.preprocess(f.readlines())
         # print('finished preprocessing')
         # print('after',content)
@@ -1461,10 +1461,10 @@ class trained_player_diamonds:
 
         print('########## content list ############# ', self.Q_table)
         new_table = self.read_Q_table().copy()
-        self.merge_table(new_table)
+        #self.merge_table(new_table)
         print('########## content list ############# ', self.Q_table)
 
-        f = open("Q tables.txt", "w")
+        f = open("diamonds tables.txt", "w")
         f.write(first_line)
         for i in range(len(self.states_list)):
             line_to_write = self.states_list[i] + ': ' + self.rewards_to_string(self.Q_table[i])

@@ -88,8 +88,8 @@ def play():
         players_order[i].cards_played(cards_played,players_order[i].my_turn(order_of_play))
     print('$$$$$$$ cards played $$$$$$$$$$$ : ',cards_played)
     winner = trick_winner(cards_played)
-    players[0].analyse_trick_diamond(cards_played,cards_played[winner][0])
-    players[0].number_of_cards()
+    #players[0].analyse_trick_diamond(cards_played,cards_played[winner][0])
+    #players[0].number_of_cards()
 
 
     return cards_played,winner
@@ -162,4 +162,6 @@ while not end_game:
     if end_game:
         winner = players[scores.index(max(scores))].name
         print('the winner is: ', winner)
+        players[0].learned_Q_table('hello')
+
         print("would you like to play another game?")
