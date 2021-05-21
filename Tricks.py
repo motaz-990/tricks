@@ -141,7 +141,7 @@ def choose_game():
     copy the game you want from line 75 and paste it in line 78
     '''
     for i in range(len(kingdoms_order)):
-        kingdoms_order[i].set_game('tricks')
+        kingdoms_order[i].set_game('diamonds')
 
 
 

@@ -625,9 +625,7 @@ class player_tricks:
         #print('my cards: ', allowed_cards)
         #print('actions: ', actions)
         action = actions[0]
-        valid_actions = []
-        for i in range(len(actions)):
-            valid_actions.append(i)
+
         #print('valid actions: ',valid_actions)
         #print(self.action_space_first[action])
         number_of_cards_action = int((action - 1) / 6)
@@ -880,14 +878,16 @@ class player_tricks:
 
             return card
 
-        #actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
-        actions = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
-        #print('actions: ', actions )
         if not match:
             return self.perform_action(cards_played,self.hand,0,match)
 
-        if not actions[1]:
-            action = self.best_action(actions[0], self.Q_table[self.states_list.index(state)].copy())
+        #actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
+        actions,have_choice = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
+        #print('actions: ', actions )
+
+
+        if not have_choice:
+            action = self.best_action(actions, self.Q_table[self.states_list.index(state)].copy())
             #print('best action: ',action)
         else:
             action = 2

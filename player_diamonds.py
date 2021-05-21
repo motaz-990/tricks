@@ -34,17 +34,18 @@ class player_diamonds:
         self.trained = trained
         self.legal = False
         self.strong = True
+        self.Q_table = self.read_Q_table()
         self.state_space = {1: {True: {True: {True: 'first legal strong vulnerable', False: 'first legal strong covered'},
                                        False: {True: 'first legal weak vulnerable', False: 'first legal weak covered'}},
                                 False: {True: {True: 'first illegal strong vulnerable', False: 'first illegal strong covered'},
                                         False: {True: 'first illegal weak vulnerable', False: 'first illegal weak covered'}}},
-                            2: {True: {0: 'second yes poisnonous', 1: 'second yes possible', 2: 'second yes safe'},
+                            2: {True: {0: 'second yes poisonous', 1: 'second yes possible', 2: 'second yes safe'},
                                 False: {True: {True: 'second no strong vulnerable', False: 'second no strong covered'},
                                         False: {True: 'second no weak vulnerable', False: 'second no weak covered'}}},
-                            3: {True: {0: 'third yes poisnonous', 1: 'third yes possible', 2: 'third yes safe'},
+                            3: {True: {0: 'third yes poisonous', 1: 'third yes possible', 2: 'third yes safe'},
                                 False: {True: {True: 'third no strong vulnerable', False: 'third no strong covered'},
                                         False: {True: 'third no weak vulnerable', False: 'third no weak covered'}}},
-                            4: {True: {0: 'fourth yes poisnonous', 1: 'fourth yes possible', 2: 'fourth yes safe'},
+                            4: {True: {0: 'fourth yes poisonous', 1: 'fourth yes possible', 2: 'fourth yes safe'},
                                 False: {True: {True: 'fourth no strong vulnerable', False: 'fourth no strong covered'},
                                         False: {True: 'fourth no weak vulnerable', False: 'fourth no weak covered'}}}}
 
@@ -53,12 +54,12 @@ class player_diamonds:
                             'first legal weak covered',
                             'first illegal strong vulnerable', 'first illegal strong covered', 'first illegal weak vulnerable',
                             'first illegal weak covered',
-                            'second yes poisnonous', 'second yes possible', 'second yes safe',
+                            'second yes poisonous', 'second yes possible', 'second yes safe',
                             'second no strong vulnerable',
                             'second no strong covered', 'second no weak vulnerable', 'second no weak covered',
-                            'third yes poisnonous','third yes possible', 'third yes safe','third no strong vulnerable',
+                            'third yes poisonous','third yes possible', 'third yes safe','third no strong vulnerable',
                             'third no strong covered','third no weak vulnerable', 'third no weak covered',
-                            'fourth yes poisnonous','fourth yes possible','fourth yes safe', 'fourth no strong vulnerable',
+                            'fourth yes poisonous','fourth yes possible','fourth yes safe', 'fourth no strong vulnerable',
                             'fourth no strong covered','fourth no weak vulnerable', 'fourth no weak covered']
 
         self.action_space_yes = ['low_card', 'mid_card', 'high_card']
@@ -67,12 +68,12 @@ class player_diamonds:
                                    'vulnerable low', 'vulnerable mid', 'vulnerable high',
                                    'few low', 'few mid', 'few high',
                                    'lot low', 'lot mid', 'lot high']
-        if self.name == 'Motaz':
-            self.Q_table = self.create_Q_table()
-            #print('hi I am diamonds player')
-        self.random_action = 90
-        self.alpha = 0
-        self.discount = 0
+
+        self.type_of_suit = ['diamond','vulnerable','few','lot']
+        self.action_space = ['low_card', 'mid_card', 'high_card']
+        self.covered = {True:'vulnerable',False:  'covered'}
+        self.strongness = {True: 'strong', False: 'weak'}
+        self.action_indexes_first = []
 
     def cards_played(self, cards, index_my_card):
         cards_to_be_removed = self.extract_cards(cards)
@@ -215,13 +216,12 @@ class player_diamonds:
     def play(self, cards_played, play_order):
         self.players_order = play_order
         # print(self.name,'cards: ',self.hand,'  hearts left: ',self.hearts_left)
-        if self.trained:
-            # print('your cards: ', self.hand)
-            if len(cards_played) > 0:
 
-                allowed_suit = cards_played[0][1][0]
-                allowed, match = self.allowed_cards(allowed_suit, self.hand)
-                '''
+        if len(cards_played) > 0:
+
+            allowed_suit = cards_played[0][1][0]
+            allowed, match = self.allowed_cards(allowed_suit, self.hand)
+            '''
                 print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 print('      your hand     ', '        allowed cards ')
                 for i in range(len(self.hand)):
@@ -231,46 +231,27 @@ class player_diamonds:
                         print(i + 1, ': ', self.hand[i])
                 print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 '''
-                card = self.Q_table_decision(cards_played, allowed, match)
+            card = self.Q_table_decision(cards_played, allowed, match)
 
-                #print('trained card: ', card)
-                return self.played_card(card)
+            #print('trained card: ', card)
+            print('allowed: ',allowed)
+            return self.played_card(card)
 
 
-            else:
-                '''
+        else:
+            '''
                 print('^^^^^^^^^^^^^^^^^^^^ AI options ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 for i in range(len(self.hand)):
                     print(i + 1, ': ', self.hand[i])
                 print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 '''
-                # allowed = self.allowed_cards(cards_played[1][0])
-                # print(allowed)
-                card = self.Q_table_decision(cards_played.copy(), self.hand, True)
-                #print('trained card: ', card)
-                return self.played_card(card)
-        else:
-            if len(cards_played) > 0:
-                allowed_cards, match = self.allowed_cards(cards_played[0][1][0], self.hand)
-                action = random.randrange(3)
-                if match:
-                    action = self.valid_action_diamond(cards_played[0][1][0],cards_played)
+            # allowed = self.allowed_cards(cards_played[1][0])
+            # print(allowed)
+            card = self.Q_table_decision(cards_played.copy(), self.hand, True)
+            #print('trained card: ', card)
+            print('allowed: ', self.hand)
+            return self.played_card(card)
 
-                card = self.perform_action(cards_played.copy(), allowed_cards, action, match)
-                return self.played_card(card)
-            else:
-                # always plays the highest card
-                #print('analyse please')
-                diamond = random.randrange(2)==1
-                if diamond:
-                    #print('hello diamond')
-                    allowed_cards,b = self.allowed_cards('diamond',self.hand)
-                    #print('allowed: cards: ',allowed_cards)
-                    card = self.perform_action(cards_played.copy(),allowed_cards ,2,True)
-                else:
-                    action = [random.randrange(3), random.randrange(3)]
-                    card = self.perform_action(cards_played.copy(), self.hand, action, False)
-                return self.played_card(card)
 
     # need some check why ai players do not play the max card when they play a different suit
 
@@ -360,7 +341,7 @@ class player_diamonds:
         # print('mid card')
         card_obj = cards()
         if first:
-            min = 3
+            min = 2
         # print(min)
         card = allowed_cards[0]
         mid_rank = card_obj.get_rank(card[1])
@@ -572,9 +553,150 @@ class player_diamonds:
                 return self.choose_suit(cards, action, suits_count)
         # checked
 
-    # require an alogritm to deal with the case of only one card left in a suit and you have the rest line 585
-    def perform_action_first(self, cards_played, allowed_cards):
+
+
+    def elimnate_invalid_actions(self, list_indexes, word):
+            # print('elim: ',word)
+            # print('action: ',self.action_space_first)
+            # print('index: ',self.action_indexes_first)
+        counter = 0
+        for i in range(len(self.action_space_first)):
+            if word in self.action_space_first[i]:
+                list_indexes.pop(i - counter)
+                counter += 1
+        return list_indexes
+
+    def keep_valid_actions(self, list_indexes, word):
+        #print('keep: ',word)
+        #print('action: ',self.action_space_first)
+        #print('index: ',self.action_indexes_first)
+        counter = 0
+        for i in range(len(self.action_space_first)):
+            if not word in self.action_space_first[i]:
+                list_indexes.pop(i - counter)
+                counter += 1
+
+        #print('indexes: ', list_indexes)
+        return list_indexes
+
+    def check_valid_number_cards(self,word,suits_count):
+        if word == 'few':
+            return len(suits_count)>1
+        if word == 'mid':
+            return len(suits_count)>2
+        return True
+
+    def check_valid_strongness(self,word,allowed_cards):
+        #print('word: ',word)
+        #print('allowed: ',allowed_cards)
+        if not self.free_suit(allowed_cards[0][0]):
+            evaluation = self.evaluate_suit(allowed_cards)
+            #print('evaluation: ',evaluation)
+            return word == self.strongness.get(evaluation[1])
+        return False
+
+    def check_valid_rank_action(self,word,allowed_cards):
+        #print('word: ', word)
+        #print('allowed: ', allowed_cards)
+        if word == 'mid_card':
+            return len(allowed_cards)>2
+        if word == 'high_card':
+            return len(allowed_cards) > 1
+        return True
+
+    def play_good_card(self,allowed_cards):
+        #print('check please')
+        for i in allowed_cards:
+            if not self.free_suit(i[0]):
+                return i
+        #print('you only have free suit')
+        return allowed_cards[0]
+
+    def suit_type(self,suits_dic,word,allowed_cards):
+
+        #print('suits dic: ',suits_dic)
+        #print('word: ',word)
+        #print('allowed cards: ',allowed_cards)
+        if word == 'diamond':
+            if suits_dic.get('diamond') != None:
+                return self.extract_suits(allowed_cards).get('diamond')
+            else:
+                return False
+
+        elif word == 'vulnerable':
+            for i in self.suits:
+                #print('suits dic check: ',suits_dic)
+                if suits_dic.get(i) != None and not suits_dic.get(i):
+                    return self.extract_suits(allowed_cards).get(i)
+            return False
+        suits_count = self.count_suits(allowed_cards)
+        #print('** suits count ** : ', suits_count)
+        if word == 'few':
+            suit = self.choose_suit(allowed_cards, 0, suits_count)
+            if suit[0][0] == 'diamond':
+                print('few diamond')
+                print('allowed: ',allowed_cards)
+                counter = 0
+                for i in range(len(allowed_cards)):
+                    if allowed_cards[i-counter][0] == 'diamond':
+                        allowed_cards.pop(i)
+                        counter+=1
+                print('allowed: ', allowed_cards)
+                return self.choose_suit(allowed_cards, 0, suits_count)
+            return suit
+
+        elif word == 'lot':
+            return self.choose_suit(allowed_cards, 2, suits_count)
+
+
+
+
+    '''
+    'diamond low', 'diamond mid', 'diamond high',
+    'vulnerable low', 'vulnerable mid', 'vulnerable high',
+    'few low', 'few mid', 'few high',
+    'lot low', 'lot mid', 'lot high']
+    '''
+
+    def perform_action_first(self, allowed_cards,actions,suits_dic):
         #print('allowed cards fir: ', allowed_cards)
+        if len(actions) == 0:
+            return self.play_good_card(allowed_cards)
+
+        action = actions[0]
+        number_of_type_action = int((action - 1) / 3)
+        number_of_type_action = self.type_of_suit[number_of_type_action]
+        print('type word: ',number_of_type_action)
+        suit = self.suit_type(suits_dic,number_of_type_action,allowed_cards)
+        print('check suit: ',suit)
+        if type(suit) != list:
+            actions.pop(0)
+            return self.perform_action_first(allowed_cards,actions,suits_dic)
+        print('type of card: ',action%3)
+        card = self.perform_action([],suit,action%3,True)
+        print('card returned: ',card)
+        return card
+
+
+        #print('valid number of cards')
+
+
+        if not self.check_valid_strongness(strong_word, suit_to_play):
+            actions.pop(0)
+            return self.perform_action_first(actions, allowed_cards)
+        # print('valid strongness ')
+
+        if not self.check_valid_rank_action(rank_word, suit_to_play):
+            actions.pop(0)
+            return self.perform_action_first(actions, allowed_cards)
+
+        return self.perform_action([], suit_to_play, rank, True)
+
+
+
+
+
+        '''
         actions = []
         a, evaluation = self.suits_evaluation()
         #print('eval fir: ', evaluation)
@@ -630,7 +752,7 @@ class player_diamonds:
 
 
         return len(actions) > 1, action*3+rank_action, self.perform_action(cards_played, suit_to_play, rank_action, True)
-
+'''
         # checked might require considering the case of performing different action than desired
 
     def perform_action(self, cards_played, allowed_cards, action, match):
@@ -673,7 +795,7 @@ class player_diamonds:
         #print('allowed cards no: ',allowed_cards)
         actions = []
         a, evaluation = self.suits_evaluation()
-        #print('eval no: ', evaluation)
+        print('eval no: ', evaluation)
         if type(evaluation.get('free'))!=None:
             return False,0,allowed_cards[0]
         suits = self.extract_suits(allowed_cards)
@@ -684,18 +806,18 @@ class player_diamonds:
         for i in self.suits:
             if type(evaluation.get(i)) == bool and evaluation.get(i) and i != 'diamond' and found_vulnerable:
                 vulnerable_suit = suits.get(i)
-                #print('vuln: ', vulnerable_suit)
+                print('vuln: ', vulnerable_suit)
                 actions.append(1)
                 found_vulnerable = False
             if type(evaluation.get(i)) == bool and not evaluation.get(i):
                 strong_suit.append(suits.get(i))
-                #print('stro: ', strong_suit)
+                print('stro: ', strong_suit)
                 actions.append(2)
 
         if type(diamond_suit) == list:
             actions.append(0)
 
-        #print('actions no: ', actions)
+        print('actions no: ', actions)
         action = actions[random.randrange(len(actions))]
         #print('action: ', action)
         suit_to_play = diamond_suit
@@ -861,7 +983,7 @@ class player_diamonds:
             return True
         suit_left = len(suit_player)
         #print('left suit: ',suit_left)
-        if suit_left-cards_removed<6:
+        if suit_left-cards_removed<4:
             return True
         return (len(self.suits_left(suit))-cards_removed)-suit_left >3
 
@@ -888,53 +1010,81 @@ class player_diamonds:
         vulnerable, suits_dic = self.suits_evaluation()
         if len(cards_played) == 0:
             #print('leg: ',self.legal,'  str: ',self.strong,'  vul: ',vulnerable)
-            return self.state_space.get(1).get(self.legal).get(self.strong).get(vulnerable)
+            return self.state_space.get(1).get(self.legal).get(self.strong).get(vulnerable),suits_dic
 
         if match:
             #print('mat: ', match, '  str: ', self.possible_diamond(cards_played))
-            return self.state_space.get(len(cards_played) + 1).get(match).get(self.possible_diamond(cards_played))
+            return self.state_space.get(len(cards_played) + 1).get(match).get(self.possible_diamond(cards_played)),suits_dic
 
         #print('mat: ', match, '  str: ', self.strong, '  vul: ', vulnerable)
-        return self.state_space.get(len(cards_played) + 1).get(match).get(self.strong).get(vulnerable)
+        return self.state_space.get(len(cards_played) + 1).get(match).get(self.strong).get(vulnerable),suits_dic
 
     # checked
+    def best_action(self,valid_actions,possible_actions):
+        print('valid acti: ',valid_actions)
+        print('poss acti: ',possible_actions)
+
+        for i in range(len(possible_actions)):
+            print('max: ',max(possible_actions))
+            print('possible best: ',possible_actions.index(max(possible_actions)))
+            best_action = possible_actions.index(max(possible_actions))
+            print('best to check: ',best_action)
+            if best_action in valid_actions:
+                print('best: ',best_action)
+                return best_action
+            possible_actions[best_action]= -1000
+
+
+    def best_actions_indexes(self,possible_actions):
+        temp_actions = possible_actions.copy()
+        possible_actions = sorted(possible_actions)
+        ab = []
+        for i in range(len(possible_actions)):
+            ab.append(i)
+        #print('original actions: ',temp_actions)
+        #print('         indexes: ',ab)
+        #print('sorted actions: ',possible_actions)
+        indexes = []
+        for i in range(len(possible_actions)):
+
+            indexes.append(temp_actions.index(possible_actions[-(i+1)]))
+        #print('indexes: ',indexes)
+        return indexes
 
 
     # check if I have a choice or I am forced to play a card
     def Q_table_decision(self, cards_played, allowed_cards, match):
-        update_Qtable = True
-        state = self.current_state(cards_played, allowed_cards, match)
-        if True or (random.random() < self.random_action):
-            #print('state: ',state)
-            if state[0:5] == 'first':
+        state,suits_dic = self.current_state(cards_played, allowed_cards, match)
+
+        print('state: ',state)
+        if state[0:5] == 'first':
                 # print('yes it is first: ',action)
-                update_Qtable,action, card = self.perform_action_first(cards_played,self.hand)
-                self.random_action -= 0.1
-                #print('action: ', action)
+            actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
 
-                return card
+            return self.perform_action_first(self.hand,actions,suits_dic)
 
-            if match:
-                actions, update_Qtable = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
-                #print('actions: ', actions, '  update: ', update_Qtable)
-                action = actions[random.randrange(len(actions))]
-                card = self.perform_action(cards_played, allowed_cards, action, match)
-                self.random_action -= 0.1
-                return card
-            else:
-                update_Qtable,action,card = self.perform_action_no(allowed_cards)
-                self.random_action -= 0.1
-                return card
+        if not match:
+            suits = self.extract_suits(self.hand)
+            if suits.get('diamond')!= None:
+                return self.perform_action([], suits.get('diamond'), 2, True)
+            return self.perform_action([], self.hand, 0, match)
+
+        actions, have_choice = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
+        print('actions: ', actions)
+
+        if not have_choice:
+            print(len(self.Q_table),'Q table: ',self.Q_table)
+            print('check actions: ',self.Q_table[self.states_list.index(state)])
+            action = self.best_action(actions, self.Q_table[self.states_list.index(state)].copy())
+            print('best action: ',action)
+        else:
+            action = 2
+            # print('forced action')
+        return self.perform_action(cards_played, allowed_cards, action, match)
+
+
 
             # print('action: ',action)
-
-
-        else:
-            # choose the max reward
-            action = state.index(max(state))
-            card = self.perform_action(cards_played, allowed_cards, action, match)
-            #print('best action: ', action)
-            return card
 
 
 
@@ -960,7 +1110,8 @@ class player_diamonds:
     def preprocess(self, content):
 
         preprocessed = []
-        for i in range(1, len(content)):
+        for i in range(len(content)):
+
             preprocessed.append(content[i][content[i].index(':') + 1:])
         return (preprocessed)
 
@@ -972,10 +1123,10 @@ class player_diamonds:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("Q tables.txt", "r")
+        f = open("diamonds tables.txt", "r")
         content = self.preprocess(f.readlines())
-        # print('finished preprocessing')
-        # print('after',content)
+        print('finished preprocessing')
+        print('after',content)
         for i in range(len(content)):
             content_list = content[i].split(",")
             # print(content_list)

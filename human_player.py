@@ -142,7 +142,12 @@ class human_player:
                         print(i + 1, ': ', self.hand[i], '   ', i + 1, ': ', allowed[i])
                     else:
                         print(i + 1, ': ', self.hand[i])
-                index_card = input('enter the number of the card you want to play (e.g 1): ')
+                index_card = 14
+                while int(index_card)>len(allowed):
+                    index_card = input('enter the number of the card you want to play (e.g 1): ')
+                    if (not index_card.isnumeric()) or int(index_card)>len(allowed):
+                        print('enter a valid number')
+                        index_card = 14
                 card = allowed[int(index_card)-1]
 
                 return self.played_card(card)
@@ -152,8 +157,13 @@ class human_player:
                     print(i + 1, ': ', self.hand[i])
                 #allowed = self.allowed_cards(cards_played[1][0])
                 #print(allowed)
-                card = input('enter the number of the card you want to play (e.g 1): ')
-                return self.hand.pop(int(card) - 1)
+                index_card = 14
+                while int(index_card) > len(self.hand) - 1:
+                    index_card = input('enter the number of the card you want to play (e.g 1): ')
+                    if (not index_card.isnumeric()) or int(index_card) > len(self.hand):
+                        print('enter a valid number')
+                        index_card = 14
+                return self.hand.pop(int(index_card) - 1)
 
 
     def play_jack3(self,cards_played, play_order,score_of_winner):
