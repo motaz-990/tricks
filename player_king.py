@@ -1227,7 +1227,7 @@ class player_king:
     def preprocess(self, content):
 
         preprocessed = []
-        for i in range(1, len(content)):
+        for i in range(len(content)):
             preprocessed.append(content[i][content[i].index(':') + 1:])
         return (preprocessed)
 

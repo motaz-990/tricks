@@ -874,19 +874,17 @@ class player_tricks:
             actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
 
             card = self.perform_action_first(actions,self.hand.copy())
-
-
             return card
 
         if not match:
             return self.perform_action(cards_played,self.hand,0,match)
 
-        #actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
+        actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
         actions,have_choice = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
-        #print('actions: ', actions )
+        #print('actions: ', actions)
 
 
-        if not have_choice:
+        if have_choice:
             action = self.best_action(actions, self.Q_table[self.states_list.index(state)].copy())
             #print('best action: ',action)
         else:
@@ -915,7 +913,7 @@ class player_tricks:
     def preprocess(self,content):
 
         preprocessed = []
-        for i in range(1,len(content)):
+        for i in range(len(content)):
             preprocessed.append(content[i][content[i].index(':') + 1:])
         return (preprocessed)
 

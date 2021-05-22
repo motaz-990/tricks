@@ -158,7 +158,7 @@ class human_player:
                 #allowed = self.allowed_cards(cards_played[1][0])
                 #print(allowed)
                 index_card = 14
-                while int(index_card) > len(self.hand) - 1:
+                while int(index_card) > len(self.hand) :
                     index_card = input('enter the number of the card you want to play (e.g 1): ')
                     if (not index_card.isnumeric()) or int(index_card) > len(self.hand):
                         print('enter a valid number')
@@ -257,7 +257,7 @@ class human_player:
         return self.score
 
     def update_score(self,trick,game):
-
+        print('game to update: ',game)
         trick_score = 0
         if game == 'tricks':
             self.subscore -= 15
@@ -278,8 +278,6 @@ class human_player:
             if self.contains_king(trick):
                 self.subscore -= 75
                 self.score -= 75
-        else:
-            self.subscore += trick
-            self.score += trick
+
 
 

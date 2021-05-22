@@ -1730,7 +1730,7 @@ class trained_player_queens:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("Q tables queens.txt", "r")
+        f = open("queens tricks.txt", "r")
         content = self.preprocess(f.readlines())
         # print('finished preprocessing')
         # print('after',content)

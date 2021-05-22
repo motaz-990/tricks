@@ -28,7 +28,7 @@ games_left = 20
 sub_games_left = 20
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
-game = 'diamond'
+game = 'diamonds'
 suits = ['spade', 'heart', 'club', 'diamond']
 up_cards = [' ',' ',' ',' ']
 down_cards = [' ',' ',' ',' ']
@@ -41,8 +41,17 @@ new_player = True
 
 def add_new_player(name):
     #print('add new player')
+    line = name + ': 0P(0), 1M(0), 2T(0), 3O(0), dr:0 \n'
+
     f = open("players.txt", "a")
-    line = name+': 0P(0), 1M(0), 2T(0), 3O(0) \n'
+    f.write(line)
+    f.close()
+
+    f = open("players diamonds.txt", "a")
+    f.write(line)
+    f.close()
+
+    f = open("players queens.txt", "a")
     f.write(line)
     f.close()
 
@@ -69,32 +78,55 @@ def players_names(name):
 
     return name
 
-def update_winner(name,winner):
+def update_winner(name,winner,file,winner_name,draw):
 
     #print('############# update winner #################')
-    f = open("players.txt", "r")
+    f = open(file, "r")
     content = (f.readlines())
-    #print('content: ', content)
-    f = open("players.txt", "w")
+    #print('!!!!!! content: ', content)
+    f = open('temp.txt', "w")
+    line = ''
+    for i in content:
+        line+= i
+    f.write(line)
+    f.close()
+    #print('name: ',name)
+    f = open(file, "w")
     name = name+':'
     line_to_write = ''
+    #print('name: ',name)
     for i in range(len(content)):
         #print('name: ',name)
         #print('content[i]: ',content[i])
         if name in content[i]:
             original_line = content[i]
-            print('original_line: ',original_line)
-            first_part = original_line[:original_line.index(winner)+3]
-            print('first_part: ', first_part)
+            #print('original_line: ',original_line)
+            #print('winner: ',winner)
+            if winner == 0:
+                name = 'Player'
+                look_for = winner +name[0]
+            else:
+                look_for = winner +winner_name[0]
+
+            #print('look for: ',look_for)
+            first_part = original_line[:original_line.index(look_for)+3]
+            #print('first_part: ', first_part)
             original_line = original_line[len(first_part):]
 
             wins = original_line[:original_line.index(')')]
-            print('wins: ',wins)
+            #print('wins: ',wins)
             updated_wins = int(wins)+1
 
             content[i] = first_part+str(updated_wins)+original_line[len(wins):]
+            if draw:
+                draws = content[i][content[i].index('dr:')+3:]
+                print('check: ',draws)
+                draws = str(int(draws)+1)
+                content[i] = content[i][:content[i].index('dr:')+3]+draws
+
         line_to_write+= content[i]
     #print(line_to_write)
+
     f.write(line_to_write)
     f.close()
 
@@ -141,7 +173,8 @@ def choose_game():
     copy the game you want from line 75 and paste it in line 78
     '''
     for i in range(len(kingdoms_order)):
-        kingdoms_order[i].set_game('diamonds')
+        kingdoms_order[i].set_game('queens')
+    return 'queens'
 
 
 
@@ -219,13 +252,35 @@ def update_wins(scores):
     temp = scores.copy()
     temp.pop(winner)
     winner2 = temp.index(max(temp))
-    if scores[winner2] == scores[winner]:
-        winner = winner2+1
+    draw = False
+    if scores[winner2+1] == scores[winner]:
+        new_winner = winner2+1
+        draw = True
 
+    #print('winner index: ', winner)
     #print('scores check: ',scores)
     #print(player_name,' updates: ', order_of_play[winner])
+    #print('game: ',game)
+    if game == 'tricks':
+        #print('hello')
+        #print('winner name: ',players[winner].name)
+        update_winner(player_name,str(winner),'players.txt',players[winner].name,False)
+        if draw:
+            update_winner(player_name, str(winner), 'players.txt', players[winner].name,draw)
 
-    update_winner(player_name,str(winner))
+    elif game == 'diamonds':
+        #print('hi')
+        #print('winner name: ', players[winner].name)
+        update_winner(player_name, str(winner), 'players diamonds.txt',players[winner].name,False)
+        if draw:
+            update_winner(player_name, str(winner), 'players diamonds.txt', players[winner].name,draw)
+    elif game == 'queens':
+        #print('hi')
+        #print('winner name: ', players[winner].name)
+        update_winner(player_name, str(winner), 'players queens.txt',players[winner].name,False)
+        if draw:
+            print('drawwwwww')
+            update_winner(player_name, str(winner), 'players queens.txt', players[winner].name,draw)
 
 
 def end_subgame():
@@ -278,7 +333,7 @@ while not end_game:
             kingdoms_order = players_order
             first_game = False
 
-        choose_game()
+        game = choose_game()
         print('################ the game has been chosen to be: ', players[0].game, ' #########################')
 
     else:
