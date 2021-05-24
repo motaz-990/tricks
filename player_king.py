@@ -50,8 +50,8 @@ class player_king:
                             2: {True: {0: 'second yes poisnonous', 1: 'second yes possible', 2: 'second yes safe'},
                                 False: {True:{True: {True: {True: 'second no with strong vulnerable advantage',False: 'second no with strong vulnerable disadvantage'},
                                                      False: {True: 'second no with strong covered advantage',False: 'second no with strong covered disadvantage'}},
-                                                False: {True: {True: 'second no with weak vulnerable advantage', False: 'second with no weak vulnerable disadvantage'},
-                                                        False: {True: 'second no with weak covered advantage',False: 'second with no weak covered disadvantage'}}},
+                                                False: {True: {True: 'second no with weak vulnerable advantage', False: 'second no with weak vulnerable disadvantage'},
+                                                        False: {True: 'second no with weak covered advantage',False: 'second no with weak covered disadvantage'}}},
                                         False:{True: {True: {True: 'second no without strong vulnerable advantage',False: 'second no without strong vulnerable disadvantage'},
                                                      False: {True: 'second no without strong covered advantage',False: 'second no without strong covered disadvantage'}},
                                                 False: {True: {True: 'second no without weak vulnerable advantage', False: 'second no without weak vulnerable disadvantage'},
@@ -60,8 +60,8 @@ class player_king:
                             3: {True: {0: 'third yes poisnonous', 1: 'third yes possible', 2: 'third yes safe'},
                                 False: {True: {True: {True: {True: 'third no with strong vulnerable advantage',False: 'third no with strong vulnerable disadvantage'},
                                                       False: {True: 'third no with strong covered advantage',False: 'third no with strong covered disadvantage'}},
-                                               False: {True: {True: 'third no with weak vulnerable advantage',False: 'third with no weak vulnerable disadvantage'},
-                                                     False: {True: 'third no with weak covered advantage',False: 'third with no weak covered disadvantage'}}},
+                                               False: {True: {True: 'third no with weak vulnerable advantage',False: 'third no with weak vulnerable disadvantage'},
+                                                     False: {True: 'third no with weak covered advantage',False: 'third no with weak covered disadvantage'}}},
                                         False: {True: {True: {True: 'third no without strong vulnerable advantage',False: 'third no without strong vulnerable disadvantage'},
                                                        False: {True: 'third no without strong covered advantage',False: 'third no without strong covered disadvantage'}},
                                                 False: {True: {True: 'third no without weak vulnerable advantage', False: 'third no without weak vulnerable disadvantage'},
@@ -70,8 +70,8 @@ class player_king:
                             4: {True: {0: 'fourth yes poisnonous', 1: 'fourth yes possible', 2: 'fourth yes safe'},
                                 False: {True: {True: {True: {True: 'third no with strong vulnerable advantage',False: 'third no with strong vulnerable disadvantage'},
                                                       False: {True: 'third no with strong covered advantage', False: 'third no with strong covered disadvantage'}},
-                                               False: {True: {True: 'third no with weak vulnerable advantage',False: 'third with no weak vulnerable disadvantage'},
-                                                       False: {True: 'third no with weak covered advantage', False: 'third with no weak covered disadvantage'}}},
+                                               False: {True: {True: 'third no with weak vulnerable advantage',False: 'third no with weak vulnerable disadvantage'},
+                                                       False: {True: 'third no with weak covered advantage', False: 'third no with weak covered disadvantage'}}},
                                         False: {True: {True: {True: 'third no without strong vulnerable advantage',False: 'third no without strong vulnerable disadvantage'},
                                                        False: {True: 'third no without strong covered advantage',False: 'third no without strong covered disadvantage'}},
                                                 False: {True: {True: 'third no without weak vulnerable advantage', False: 'third no without weak vulnerable disadvantage'},
@@ -126,12 +126,8 @@ class player_king:
                                    'vulnerable low', 'vulnerable mid', 'vulnerable high',
                                    'advantage low', 'advantage mid', 'advantage high']
 
-        if self.name == 'Motaz':
-            self.Q_table = self.create_Q_table()
-            #print('hi I am king player')
-        self.random_action = 90
-        self.alpha = 0
-        self.discount = 0
+
+        self.Q_table = self.read_Q_table()
 
     def cards_played(self, cards, index_my_card):
         cards_to_be_removed = self.extract_cards(cards)
@@ -728,18 +724,83 @@ class player_king:
             if i[1] == 'q':
                 return i
 
+
+
+
+    def suit_type(self, suits_dic, word, allowed_cards,match):
+
+        #print('suits dic: ',suits_dic)
+        #print('word: ',word)
+        #print('allowed cards: ',allowed_cards)
+        if word == 'king':
+            if not match and self.have_king:
+                return [('heart','k')]
+            for i in self.suits:
+                if suits_dic.get('heart') != None :
+                    return self.extract_suits(allowed_cards).get('heart')
+            return False
+
+        elif word == 'vulnerable':
+            for i in self.suits:
+                # print('suits dic check: ',suits_dic)
+                #print('kkkk: ',suits_dic.get(i) != None,not suits_dic.get(i),((i,'q') not in self.queens))
+                if suits_dic.get(i) != None and not suits_dic.get(i) and i != 'heart':
+                    return self.extract_suits(allowed_cards).get(i)
+            return False
+
+        # print('** suits count ** : ', suits_count)
+        if word == 'strong':
+            for i in self.suits:
+                # print('suits dic check: ',suits_dic)
+                #print('kkkk: ',suits_dic.get(i) != None,not suits_dic.get(i),((i,'q') not in self.queens))
+                if suits_dic.get(i) != None and suits_dic.get(i) and i != 'heart':
+                    return self.extract_suits(allowed_cards).get(i)
+            return False
+
+        elif word == 'advantage':
+            #print('hand advantage: ',self.hand)
+            have_advantage, suit = self.decide_advantage()
+            #print('suit: ',suit)
+            if have_advantage:
+                return suit
+            else:
+                return False
+
+    #['queen', 'strong', 'vulnerable', 'advantage']
+
+    def play_good_card(self,allowed_cards):
+        #print('check please')
+        for i in allowed_cards:
+            if not self.free_suit(i[0]):
+                return i
+        #print('you only have free suit')
+        return allowed_cards[0]
+
+
+
+
+
+
     # require an alogritm to deal with the case of only one card left in a suit and you have the rest line 585
-    def perform_action_first(self, suits_eval, allowed_cards):
-        #print('allowed cards fir: ', allowed_cards)
-        subaction = random.randrange(3)
-        update,action,card = self.perform_action_no(allowed_cards,suits_eval,subaction)
-        #print('card: ',card)
-        #print('subaction: ',subaction)
-        #if update:
-            #print('action decided: ',self.action_space_first[action*3+subaction])
+    def perform_action_first(self, allowed_cards, actions, suits_dic):
 
-        return update,action*3+subaction,card
-
+        if len(actions) == 0:
+            return self.play_good_card(allowed_cards)
+        print('actions: ',actions)
+        action = actions[0]
+        number_of_type_action = int((action) / 3)
+        print('number of type action check: ', number_of_type_action)
+        number_of_type_action = self.action_space_no[number_of_type_action]
+        print('type word: ',number_of_type_action)
+        suit = self.suit_type(suits_dic, number_of_type_action, allowed_cards.copy(), True)
+        print('check suit: ',suit)
+        if type(suit) != list:
+            actions.pop(0)
+            return self.perform_action_first(allowed_cards, actions, suits_dic)
+        # print('type of card: ',action%3)
+        card = self.perform_action([], suit, action % 3, True)
+        # print('card returned: ',card)
+        return card
 
 
 
@@ -832,67 +893,23 @@ class player_king:
             #print('returned card: ',self.max_card(suit))
             return self.max_card(suit)
 
-    def perform_action_no(self, allowed_cards,suits_eval,action):
-        #print('allowed cards no: ',allowed_cards)
-        #print('suits eval: ',suits_eval)
-        if suits_eval.get('free')!= None:
-            return False,-1,allowed_cards[0]
-        actions = []
-        cards_to_play= []
-        suits_dic = self.extract_suits(allowed_cards)
-        vulnerabel_suits = []
-        strong_suits = []
-        if self.have_king:
-            cards_to_play.append(('heart','k'))
-            #print('returned queen: ',cards_to_play[-1])
-            actions.append(0)
-        else:
-            cards_to_play.append([])
-
-        #print('cards to play: ',cards_to_play)
-        for i in self.suits:
-            if suits_eval.get(i) == False:
-                vulnerabel_suits.append(suits_dic.get(i))
-            if suits_eval.get(i) == True:
-                strong_suits.append(suits_dic.get(i))
-
-        if len(strong_suits)>0:
-            cards_to_play.append(self.decide_card(strong_suits,action))
-            actions.append(1)
-        else:
-            cards_to_play.append([])
-        #print('cards to play: ', cards_to_play)
-        if len(vulnerabel_suits)>0:
-            cards_to_play.append(self.decide_card(vulnerabel_suits,action))
-            actions.append(2)
-        else:
-            cards_to_play.append([])
-        if len(self.advantages)>0:
-            advantage = False
-            for i in self.advantages:
-                if len(i) > 0:
-                    advantage = True
-                    break
-            if advantage:
-                actions.append(3)
-                cards_to_play.append(self.decide_card(self.advantages,action))
-            else:
-                cards_to_play.append([])
-        else:
-            cards_to_play.append([])
-
-
-        #print('cards to play: ', cards_to_play)
-        action = actions[random.randrange(len(actions))]
-        #print('actions: ', actions)
-        #print('len action :',len(actions))
-        #print('action: ',action)
-        #print('to play: ',cards_to_play)
-        #print('decided action: ',self.action_space_no[action])
-        #print('played: ',cards_to_play[action])
-
-        return len(actions)==1,action,cards_to_play[action]
-
+    def perform_action_no(self, allowed_cards, actions, suits_dic):
+        if len(actions) == 0:
+            return self.play_good_card(allowed_cards)
+        # print('actions: ',actions)
+        action = actions[0]
+        # print('number of type action check: ', number_of_type_action)
+        number_of_type_action = self.action_space_no[action]
+        # print('type word: ',number_of_type_action)
+        suit = self.suit_type(suits_dic, number_of_type_action, allowed_cards.copy(), False)
+        # print('check suit: ',suit)
+        if type(suit) != list:
+            actions.pop(0)
+            return self.perform_action_no(allowed_cards, actions, suits_dic)
+        # print('type of card: ',action%3)
+        card = self.perform_action([], suit, 2, True)
+        # print('card returned: ',card)
+        return card
 
     def extract_suits(self, cards):
         my_cards = {}
@@ -1107,21 +1124,32 @@ class player_king:
         return (len(self.suits_left(suit))-cards_removed)-suit_left >3
 
     def possible_queen(self,cards_played):
-        #print('possible diamond')
-        #print(cards_played)
+        # print('possible queen')
+        # print(cards_played)
         cards = self.extract_cards(cards_played)
-        #print(cards)
-        for i in cards:
-            if i[1]=='q':
-                return 0
-        players_left = 4-(len(cards_played)+1)
+        # print(cards)
+        if self.have_king:
+            # print('I have the queen')
+            return 2
+        if self.contains_king(cards_played):
+            return 0
+
+
+
+        players_left = 4 - (len(cards_played) + 1)
+        # print('players left: ',players_left)
+        if players_left == 0:
+            # print('safe')
+            return 2
         for i in range(players_left):
-            if self.potential_different(cards_played[0][1][0],self.players_cards_expected[i],cards_played):
-                #print('hello')
+            if cards_played[0][1][0] == 'heart':
+                return 1
+            if self.potential_different(cards_played[0][1][0], self.players_cards_expected[i], cards_played):
+                # print('poss')
                 return 1
 
+        # print('safe')
         return 2
-
 
     def decide_advantage(self):
         if len(self.advantages)>0:
@@ -1158,50 +1186,79 @@ class player_king:
         #print('mat: ', match, '  str: ', strong, '  vul: ', vulnerable,' advantage: ',advantage)
         return self.state_space.get(len(cards_played) + 1).get(match).get(king).get(strong).get(vulnerable).get(advantage),suits_dic
 
-    # checked
 
 
 
-    # ,cards_expected,state_of_the_game
+    def best_action(self,valid_actions,possible_actions):
+        #print('valid acti: ',valid_actions)
+        #print('poss acti: ',possible_actions)
+
+        for i in range(len(possible_actions)):
+            #print('max: ',max(possible_actions))
+            #print('possible best: ',possible_actions.index(max(possible_actions)))
+            best_action = possible_actions.index(max(possible_actions))
+            #print('best to check: ',best_action)
+            if best_action in valid_actions:
+                #print('best: ',best_action)
+                return best_action
+            possible_actions[best_action]= -1000
+
+
+    def best_actions_indexes(self,possible_actions):
+        temp_actions = possible_actions.copy()
+        possible_actions = sorted(possible_actions)
+        ab = []
+        for i in range(len(possible_actions)):
+            ab.append(i)
+        #print('original actions: ',temp_actions)
+        #print('         indexes: ',ab)
+        #print('sorted actions: ',possible_actions)
+        indexes = []
+        for i in range(len(possible_actions)):
+
+            indexes.append(temp_actions.index(possible_actions[-(i+1)]))
+        #print('indexes: ',indexes)
+        return indexes
+
 
 
     # check if I have a choice or I am forced to play a card
     def Q_table_decision(self, cards_played, allowed_cards, match):
-        update_Qtable = True
-        state,suits_eval = self.current_state(cards_played, allowed_cards, match)
-        if True or (random.random() < self.random_action):
-            #print('state: ',state)
-            if state[0:5] == 'first':
-                # print('yes it is first: ',action)
-                update_Qtable,action, card = self.perform_action_first(suits_eval,self.hand)
-                self.random_action -= 0.1
-                #print('action: ', action)
+        state, suits_eval = self.current_state(cards_played, allowed_cards, match)
+        print('allowed cards: ',allowed_cards)
+        print('state: ',state)
+        # print('suits eval: ',suits_eval)
+        if state[0:5] == 'first':
+            # print('yes it is first: ',action)
+            #print('q table: ',self.Q_table)
+            #print('state list: ',self.states_list)
+            actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
+            return self.perform_action_first(self.hand, actions, suits_eval)
 
-                return card
-
-            if match:
-                actions, update_Qtable = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
-                #print('actions: ', actions, '  update: ', update_Qtable)
-                action = actions[random.randrange(len(actions))]
-                card = self.perform_action(cards_played, allowed_cards, action, match)
-                self.random_action -= 0.1
-                return card
-            else:
-                #'queen', 'vulnerable', 'advantage', 'disadvantage'
-                update_Qtable,action,card = self.perform_action_no(allowed_cards,suits_eval,2)
-                self.random_action -= 0.1
-                return card
-
-            # print('action: ',action)
-
+        if not match:
+            actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
+            return self.perform_action_no(self.hand, actions, suits_eval)
 
         else:
-            # choose the max reward
-            action = state.index(max(state))
-            card = self.perform_action(cards_played, allowed_cards, action, match)
-            #print('best action: ', action)
-            return card
+            actions, have_choice = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
+            # print('actions: ', actions)
 
+            if have_choice:
+                # print(len(self.Q_table),'Q table: ',self.Q_table)
+                # print('check actions: ',self.Q_table[self.states_list.index(state)])
+                action = self.best_action(actions, self.Q_table[self.states_list.index(state)].copy())
+                # print('best action: ',action)
+            else:
+                action = 2
+                # print('forced action')
+            card_obj = cards()
+            temp = allowed_cards.copy()
+            if card_obj.get_rank('k') < self.highest_card_played(cards_played) and allowed_cards[0][0] == 'heart' and self.have_king:
+                return (allowed_cards[0][0], 'k')
+            elif len(allowed_cards) > 1 and ('heart', 'k') in allowed_cards:
+                # print('avoided playing queen')
+                temp.remove((allowed_cards[0][0], 'k'))
+            return self.perform_action(cards_played, temp, action, match)
 
 
     def my_turn(self, play_order):
@@ -1239,7 +1296,7 @@ class player_king:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("Q tables queens.txt", "r")
+        f = open("king table.txt", "r")
         content = self.preprocess(f.readlines())
         # print('finished preprocessing')
         # print('after',content)
@@ -1252,7 +1309,7 @@ class player_king:
 
             content[i] = content_list
 
-        print('########## content list ############# ', content)
+        #print('########## content list ############# ', content)
         # print(content_list)
 
         f.close()
@@ -1265,7 +1322,7 @@ class player_king:
         self.merge_table(new_table)
         print('########## content list ############# ', self.Q_table)
 
-        f = open("Q tables.txt", "w")
+        f = open("king table.txt", "w")
         f.write(first_line)
         for i in range(len(self.states_list)):
             line_to_write = self.states_list[i] + ': ' + self.rewards_to_string(self.Q_table[i])

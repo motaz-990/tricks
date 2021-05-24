@@ -39,6 +39,7 @@ class trained_player_jack:
         self.advantages = []
         self.finished = False
 
+
         '''
         self.state_space = {1:{1:{5:'worst high',6:'worst block',11:'worst high block'},
                                2:{}}
@@ -49,7 +50,7 @@ class trained_player_jack:
         #block at the end
         self.states_list = ['worst high',#'worst block','worst high block',
 
-                            'worst bad','worst bad high ', #'worst bad block','worst bad high block',
+                            'worst bad','worst bad high', #'worst bad block','worst bad high block',
                             'worst bad good','worst bad good high', #'worst bad good block', 'worst bad good high block',
                             'worst bad best', 'worst bad best high', #'worst bad best block','worst bad best high block',
                             'worst bad good best', 'worst bad good best high',
@@ -67,7 +68,7 @@ class trained_player_jack:
 
                             ###
 
-                            'good high', 'worst good block', 'worst good high block',
+                            'good high', #'worst good block', 'worst good high block',
                             'good best', 'good best high',
 
                             ###
@@ -76,6 +77,10 @@ class trained_player_jack:
                             ###
 
 
+        if self.name == 'Motaz':
+            self.Q_table = self.create_Q_table()
+            print(len(self.Q_table))
+            self.learned_Q_table('hello')
 
         self.state_space_length = len(self.states_list)
         self.action_space_yes = ['low_card', 'mid_card', 'high_card']
@@ -468,22 +473,31 @@ class trained_player_jack:
             self.score -= 15
         '''
 
+    def spaces_in_state(self,state):
+
+        spaces = 1
+        temp = ''
+        for i in state:
+            if i == ' ':
+                spaces += 1
+
+        return(spaces)
+
+
+
+
     def create_Q_table(self):
 
         table = []
-        '''
-        for i in range((self.state_space_length)):
+
+        for i in self.states_list:
             state = []
-            if 'legal' in self.states_list[i]:
-                actions = self.action_space_first
-            elif 'yes' in self.states_list[i]:
-                actions = self.action_space_yes
-            elif ' no ' in self.states_list[i]:
-                actions = self.action_space_no
-            for j in range(len(actions)):
+            actions = self.spaces_in_state(i)
+            for j in range(actions):
                 state.append(0)
             table.append(state)
-            '''
+
+
         return table
 
 
@@ -1452,7 +1466,7 @@ class trained_player_jack:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("Q tables queens.txt", "r")
+        f = open("jacks table.txt", "r")
         content = self.preprocess(f.readlines())
         # print('finished preprocessing')
         # print('after',content)
@@ -1465,7 +1479,7 @@ class trained_player_jack:
 
             content[i] = content_list
 
-        print('########## content list ############# ', content)
+        #print('########## content list ############# ', content)
         # print(content_list)
 
         f.close()
@@ -1474,12 +1488,12 @@ class trained_player_jack:
     def learned_Q_table(self, first_line):
 
         print('########## content list ############# ', self.Q_table)
-        new_table = self.read_Q_table().copy()
-        self.merge_table(new_table)
+        #new_table = self.read_Q_table().copy()
+        #self.merge_table(new_table)
         print('########## content list ############# ', self.Q_table)
 
-        f = open("Q tables.txt", "w")
-        f.write(first_line)
+        f = open("jacks table.txt", "w")
+
         for i in range(len(self.states_list)):
             line_to_write = self.states_list[i] + ': ' + self.rewards_to_string(self.Q_table[i])
             line_to_write += '\n'

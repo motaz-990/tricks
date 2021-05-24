@@ -127,6 +127,7 @@ class player_queens:
 
 
         self.Q_table = self.read_Q_table()
+
         #print('Q table check: ',self.Q_table)
 
     def cards_played(self, cards, index_my_card):
@@ -720,13 +721,13 @@ class player_queens:
 
     def remove_suit(self,cards,suit):
         i = 0
-        print('cars removed: ', cards)
+        #print('cars removed: ', cards)
         while i <len(cards):
             if cards[i][0] == suit:
                 cards.pop(i)
                 i-=1
             i+=1
-        print('cars removed: ',cards)
+        #print('cars removed: ',cards)
 
 
 
@@ -734,13 +735,16 @@ class player_queens:
     def suit_type(self, suits_dic, word, allowed_cards,match):
 
         #print('suits dic: ',suits_dic)
-        print('word: ',word)
+        #print('word: ',word)
         #print('allowed cards: ',allowed_cards)
         if word == 'queen':
-            if len(self.queens)>0:
-                return self.queens[0]
+            if not match:
+                if len(self.queens) > 0:
+                    return [self.queens[0]]
             else:
-                return False
+                if len(self.queens)>0:
+                    return self.extract_suits(allowed_cards).get(self.queens[0][0])
+            return False
 
         elif word == 'vulnerable':
             for i in self.suits:
@@ -760,9 +764,9 @@ class player_queens:
             return False
 
         elif word == 'advantage':
-            print('hand advantage: ',self.hand)
+            #print('hand advantage: ',self.hand)
             have_advantage, suit = self.decide_advantage()
-            print('suit: ',suit)
+            #print('suit: ',suit)
             if have_advantage:
                 return suit
             else:
@@ -783,7 +787,7 @@ class player_queens:
 
         if len(actions) == 0:
             return self.play_good_card(allowed_cards)
-        print('actions: ',actions)
+        #print('actions: ',actions)
         action = actions[0]
         number_of_type_action = int((action) / 3)
         #print('number of type action check: ', number_of_type_action)
@@ -1184,30 +1188,30 @@ class player_queens:
         return (len(self.suits_left(suit))-cards_removed)-suit_left >3
 
     def possible_queen(self,cards_played):
-        print('possible queen')
-        print(cards_played)
+        #print('possible queen')
+        #print(cards_played)
         cards = self.extract_cards(cards_played)
         #print(cards)
         if  (cards_played[0][1][0],'q') in self.hand:
-            print('I have the queen')
+            #print('I have the queen')
             return 2
         for i in cards:
             if i[1]=='q':
-                print('pois')
+                #print('pois')
                 return 0
         players_left = 4-(len(cards_played)+1)
-        print('players left: ',players_left)
+        #print('players left: ',players_left)
         if players_left == 0:
-            print('safe')
+            #print('safe')
             return 2
         for i in range(players_left):
             if (cards_played[0][1][0],'q') in self.players_cards_expected[i]:
                 return 1
             if self.potential_different(cards_played[0][1][0],self.players_cards_expected[i],cards_played):
-                print('poss')
+                #print('poss')
                 return 1
 
-        print('safe')
+        #print('safe')
         return 2
 
 
@@ -1311,7 +1315,7 @@ class player_queens:
     def Q_table_decision(self, cards_played, allowed_cards, match):
         state,suits_eval = self.current_state(cards_played, allowed_cards, match)
 
-        print('state: ',state)
+        #print('state: ',state)
         #print('suits eval: ',suits_eval)
         if state[0:5] == 'first':
             # print('yes it is first: ',action)
@@ -1320,7 +1324,7 @@ class player_queens:
 
         if not match:
             actions = self.best_actions_indexes(self.Q_table[self.states_list.index(state)])
-            return self.perform_action_first(self.hand, actions, suits_eval)
+            return self.perform_action_no(self.hand, actions, suits_eval)
 
         else:
             actions, have_choice = self.valid_actions(allowed_cards, self.highest_card_played(cards_played))
@@ -1337,10 +1341,10 @@ class player_queens:
             card_obj = cards()
             temp = allowed_cards.copy()
             if card_obj.get_rank('q') < self.highest_card_played(cards_played) and (allowed_cards[0][0], 'q') in allowed_cards:
-                print('got rid of queen')
+                #print('got rid of queen')
                 return (allowed_cards[0][0],'q')
             elif len(allowed_cards)>1 and (allowed_cards[0][0], 'q') in allowed_cards:
-                print('avoided playing queen')
+                #print('avoided playing queen')
                 temp.remove((allowed_cards[0][0], 'q'))
             return self.perform_action(cards_played, temp, action, match)
 
@@ -1395,7 +1399,7 @@ class player_queens:
 
             content[i] = content_list
 
-        print('########## content list ############# ', content)
+        #print('########## content list ############# ', content)
         # print(content_list)
 
         f.close()

@@ -38,45 +38,75 @@ class trained_player_king:
         self.advantages = []
         #with king .. strong in heart .. have vulnerablity .. hav advantage
         #without king .. weak in heart .. strong on every suit but heart .. does not have advantage
-        self.state_space = {1: {True: {True: {True:{True:'first with strong vulnerable advantage',False:'first with strong vulnerable disadvantage'},
-                                            False:{True:'first with strong covered advantage',False:'first with strong covered disadvantage'}},
-                                       False:{True:{True:'first with weak vulnerable advantage',False:'first with weak vulnerable disadvantage'},
-                                            False:{True:'first with weak covered advantage',False:'first with weak covered disadvantage'}}},
-                                False:{True: {True:{True:'first without strong vulnerable advantage',False:'first without strong vulnerable disadvantage'},
-                                            False:{True:'first without strong covered advantage',False:'first without strong covered disadvantage'}},
-                                       False:{True:{True:'first without weak vulnerable advantage',False:'first without weak vulnerable disadvantage'},
-                                            False:{True:'first without weak covered advantage',False:'first without weak covered disadvantage'}}}},
+        self.state_space = {1: {True: {True: {
+            True: {True: 'first with strong vulnerable advantage', False: 'first with strong vulnerable disadvantage'},
+            False: {True: 'first with strong covered advantage', False: 'first with strong covered disadvantage'}},
+                                       False: {True: {True: 'first with weak vulnerable advantage',
+                                                      False: 'first with weak vulnerable disadvantage'},
+                                               False: {True: 'first with weak covered advantage',
+                                                       False: 'first with weak covered disadvantage'}}},
+                                False: {True: {True: {True: 'first without strong vulnerable advantage',
+                                                      False: 'first without strong vulnerable disadvantage'},
+                                               False: {True: 'first without strong covered advantage',
+                                                       False: 'first without strong covered disadvantage'}},
+                                        False: {True: {True: 'first without weak vulnerable advantage',
+                                                       False: 'first without weak vulnerable disadvantage'},
+                                                False: {True: 'first without weak covered advantage',
+                                                        False: 'first without weak covered disadvantage'}}}},
 
                             2: {True: {0: 'second yes poisnonous', 1: 'second yes possible', 2: 'second yes safe'},
-                                False: {True:{True: {True: {True: 'second no with strong vulnerable advantage',False: 'second no with strong vulnerable disadvantage'},
-                                                     False: {True: 'second no with strong covered advantage',False: 'second no with strong covered disadvantage'}},
-                                                False: {True: {True: 'second no with weak vulnerable advantage', False: 'second with no weak vulnerable disadvantage'},
-                                                        False: {True: 'second no with weak covered advantage',False: 'second with no weak covered disadvantage'}}},
-                                        False:{True: {True: {True: 'second no without strong vulnerable advantage',False: 'second no without strong vulnerable disadvantage'},
-                                                     False: {True: 'second no without strong covered advantage',False: 'second no without strong covered disadvantage'}},
-                                                False: {True: {True: 'second no without weak vulnerable advantage', False: 'second no without weak vulnerable disadvantage'},
-                                                        False: {True: 'second no without weak covered advantage',False: 'second no without weak covered disadvantage'}}}}},
+                                False: {True: {True: {True: {True: 'second no with strong vulnerable advantage',
+                                                             False: 'second no with strong vulnerable disadvantage'},
+                                                      False: {True: 'second no with strong covered advantage',
+                                                              False: 'second no with strong covered disadvantage'}},
+                                               False: {True: {True: 'second no with weak vulnerable advantage',
+                                                              False: 'second no with weak vulnerable disadvantage'},
+                                                       False: {True: 'second no with weak covered advantage',
+                                                               False: 'second no with weak covered disadvantage'}}},
+                                        False: {True: {True: {True: 'second no without strong vulnerable advantage',
+                                                              False: 'second no without strong vulnerable disadvantage'},
+                                                       False: {True: 'second no without strong covered advantage',
+                                                               False: 'second no without strong covered disadvantage'}},
+                                                False: {True: {True: 'second no without weak vulnerable advantage',
+                                                               False: 'second no without weak vulnerable disadvantage'},
+                                                        False: {True: 'second no without weak covered advantage',
+                                                                False: 'second no without weak covered disadvantage'}}}}},
 
                             3: {True: {0: 'third yes poisnonous', 1: 'third yes possible', 2: 'third yes safe'},
-                                False: {True: {True: {True: {True: 'third no with strong vulnerable advantage',False: 'third no with strong vulnerable disadvantage'},
-                                                      False: {True: 'third no with strong covered advantage',False: 'third no with strong covered disadvantage'}},
-                                               False: {True: {True: 'third no with weak vulnerable advantage',False: 'third with no weak vulnerable disadvantage'},
-                                                     False: {True: 'third no with weak covered advantage',False: 'third with no weak covered disadvantage'}}},
-                                        False: {True: {True: {True: 'third no without strong vulnerable advantage',False: 'third no without strong vulnerable disadvantage'},
-                                                       False: {True: 'third no without strong covered advantage',False: 'third no without strong covered disadvantage'}},
-                                                False: {True: {True: 'third no without weak vulnerable advantage', False: 'third no without weak vulnerable disadvantage'},
-                                                        False: {True: 'third no without weak covered advantage',False: 'third no without weak covered disadvantage'}}}}},
+                                False: {True: {True: {True: {True: 'third no with strong vulnerable advantage',
+                                                             False: 'third no with strong vulnerable disadvantage'},
+                                                      False: {True: 'third no with strong covered advantage',
+                                                              False: 'third no with strong covered disadvantage'}},
+                                               False: {True: {True: 'third no with weak vulnerable advantage',
+                                                              False: 'third no with weak vulnerable disadvantage'},
+                                                       False: {True: 'third no with weak covered advantage',
+                                                               False: 'third no with weak covered disadvantage'}}},
+                                        False: {True: {True: {True: 'third no without strong vulnerable advantage',
+                                                              False: 'third no without strong vulnerable disadvantage'},
+                                                       False: {True: 'third no without strong covered advantage',
+                                                               False: 'third no without strong covered disadvantage'}},
+                                                False: {True: {True: 'third no without weak vulnerable advantage',
+                                                               False: 'third no without weak vulnerable disadvantage'},
+                                                        False: {True: 'third no without weak covered advantage',
+                                                                False: 'third no without weak covered disadvantage'}}}}},
 
                             4: {True: {0: 'fourth yes poisnonous', 1: 'fourth yes possible', 2: 'fourth yes safe'},
-                                False: {True: {True: {True: {True: 'third no with strong vulnerable advantage',False: 'third no with strong vulnerable disadvantage'},
-                                                      False: {True: 'third no with strong covered advantage', False: 'third no with strong covered disadvantage'}},
-                                               False: {True: {True: 'third no with weak vulnerable advantage',False: 'third with no weak vulnerable disadvantage'},
-                                                       False: {True: 'third no with weak covered advantage', False: 'third with no weak covered disadvantage'}}},
-                                        False: {True: {True: {True: 'third no without strong vulnerable advantage',False: 'third no without strong vulnerable disadvantage'},
-                                                       False: {True: 'third no without strong covered advantage',False: 'third no without strong covered disadvantage'}},
-                                                False: {True: {True: 'third no without weak vulnerable advantage', False: 'third no without weak vulnerable disadvantage'},
-                                                        False: {True: 'third no without weak covered advantage',False: 'third no without weak covered disadvantage'}}}}}}
-
+                                False: {True: {True: {True: {True: 'fourth no with strong vulnerable advantage',
+                                                             False: 'fourth no with strong vulnerable disadvantage'},
+                                                      False: {True: 'fourth no with strong covered advantage',
+                                                              False: 'fourth no with strong covered disadvantage'}},
+                                               False: {True: {True: 'fourth no with weak vulnerable advantage',
+                                                              False: 'fourth no with weak vulnerable disadvantage'},
+                                                       False: {True: 'fourth no with weak covered advantage',
+                                                               False: 'fourth no with weak covered disadvantage'}}},
+                                        False: {True: {True: {True: 'fourth no without strong vulnerable advantage',
+                                                              False: 'fourth no without strong vulnerable disadvantage'},
+                                                       False: {True: 'fourth no without strong covered advantage',
+                                                               False: 'fourth no without strong covered disadvantage'}},
+                                                False: {True: {True: 'fourth no without weak vulnerable advantage',
+                                                               False: 'fourth no without weak vulnerable disadvantage'},
+                                                        False: {True: 'fourth no without weak covered advantage',
+                                                                False: 'fourth no without weak covered disadvantage'}}}}}}
 
         self.states_list = ['first with strong vulnerable advantage','first with strong vulnerable disadvantage',
                             'first with strong covered advantage', 'first with strong covered disadvantage',
@@ -128,6 +158,8 @@ class trained_player_king:
 
         if self.name == 'Motaz':
             self.Q_table = self.create_Q_table()
+            print(len(self.Q_table))
+            self.learned_Q_table('hello')
         self.random_action = 90
         self.alpha = 0
         self.discount = 0
@@ -473,21 +505,18 @@ class trained_player_king:
     def create_Q_table(self):
 
         table = []
-        '''
-        for i in range((self.state_space_length)):
+        for i in self.states_list:
             state = []
-            if 'legal' in self.states_list[i]:
+            if 'first' in i:
                 actions = self.action_space_first
-            elif 'yes' in self.states_list[i]:
+            elif 'yes' in i:
                 actions = self.action_space_yes
-            elif ' no ' in self.states_list[i]:
+            elif ' no ' in i:
                 actions = self.action_space_no
             for j in range(len(actions)):
                 state.append(0)
             table.append(state)
-            '''
         return table
-
 
     def min_card(self, allowed_cards, first, max):
         card_obj = cards()
@@ -1692,7 +1721,7 @@ class trained_player_king:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("queens tricks.txt.txt", "r")
+        f = open("king table.txt", "r")
         content = self.preprocess(f.readlines())
         # print('finished preprocessing')
         # print('after',content)
@@ -1714,13 +1743,14 @@ class trained_player_king:
     def learned_Q_table(self, first_line):
 
         print('########## content list ############# ', self.Q_table)
-        new_table = self.read_Q_table().copy()
-        self.merge_table(new_table)
+        #new_table = self.read_Q_table().copy()
+        #self.merge_table(new_table)
         print('########## content list ############# ', self.Q_table)
 
-        f = open("Q tables.txt", "w")
-        f.write(first_line)
+        f = open("king table.txt", "w")
+        print('states: ',self.states_list)
         for i in range(len(self.states_list)):
+
             line_to_write = self.states_list[i] + ': ' + self.rewards_to_string(self.Q_table[i])
             line_to_write += '\n'
             f.write(line_to_write)

@@ -69,7 +69,7 @@ class player_jack:
 
                             ###
 
-                            'good high', 'worst good block', 'worst good high block',
+                            'good high', #'worst good block', 'worst good high block',
                             'good best', 'good best high',
 
                             ###
@@ -85,12 +85,8 @@ class player_jack:
                                    'vulnerable low', 'vulnerable mid', 'vulnerable high',
                                    'advantage low', 'advantage mid', 'advantage high']
 
-        if self.name == 'Motaz':
-            self.Q_table = self.create_Q_table()
-            #print('hi I am jack player')
-        self.random_action = 90
-        self.alpha = 0
-        self.discount = 0
+        self.Q_table = self.read_Q_table()
+
 
     def cards_played(self, cards, index_my_card):
         cards_to_be_removed = self.extract_cards(cards)
@@ -263,11 +259,6 @@ class player_jack:
 
         return card
 
-        '''
-        for i in range(len(self.hand)):
-            if card == self.hand[i]:
-                return self.hand.pop(i)
-        '''
 
     # need some adjustments
     def get_score(self):
@@ -311,6 +302,7 @@ class player_jack:
                 else:
                     #print('^^^^^^^^^^^^^^^^^^^^ AI decision ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                     #print(i)
+                    print('allowed: ',allowed_up,allowed_down)
                     card = self.Q_table_decision(jack, allowed_up, allowed_down)
                     print(self.name, ' played: ', card)
             else:
@@ -716,15 +708,15 @@ class player_jack:
 
         # checked might require considering the case of performing different action than desired
 
-    def perform_action(self, allowed_up, allowed_down, actions):
-        action_index = random.randrange(len(actions))
-        action = actions[action_index]
+    def perform_action(self, allowed_up, allowed_down, action):
         if action == 'high':
-            return action_index, allowed_up[0]
+            return allowed_up[0]
         suit = self.lowest_suits[self.options.index(action)]
+        #print('hand: ',self.hand)
+        #print('suit: ',suit)
         for i in allowed_down:
             if i[0] == suit:
-                return action_index, i
+                return i
 
     def perform_action_no(self, allowed_cards, suits_eval, action):
         #print('allowed cards no: ', allowed_cards)
@@ -914,16 +906,22 @@ class player_jack:
     def Q_table_decision(self, jack, allowed_up, allowed_down):
 
         state = self.current_state(jack, allowed_up, allowed_down)
-        if (random.random() < self.random_action) or True:
-            #print('state: ', state)
-            actions = self.extract_actions(state)
-            action, card = self.perform_action(allowed_up, allowed_down, actions)
-            #print('check card: ', card)
-            self.random_action -= 0.1
-            #print('action: ', action)
+        print('state: ', state)
+        actions = self.extract_actions(state)
+        #print('actions: ',actions)
+        #print(len(self.Q_table),' q table: ',self.Q_table)
+        #print(len(self.states_list),'states list: ',self.states_list)
+        if state == 'high':
+            return allowed_up[0]
+        possible_actions = self.Q_table[self.states_list.index(state)]
+        best_action = possible_actions.index(max(possible_actions))
+        #print('action made: ', actions[best_action])
+        card = self.perform_action(allowed_up, allowed_down, actions[best_action])
+        #print('check card: ', card)
 
 
-            return card
+
+        return card
 
         # else:
         # choose the max reward
@@ -965,7 +963,7 @@ class player_jack:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("Q tables queens.txt", "r")
+        f = open("jacks table.txt", "r")
         content = self.preprocess(f.readlines())
         # print('finished preprocessing')
         # print('after',content)
@@ -978,7 +976,7 @@ class player_jack:
 
             content[i] = content_list
 
-        print('########## content list ############# ', content)
+        #print('########## content list ############# ', content)
         # print(content_list)
 
         f.close()
