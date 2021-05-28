@@ -3,7 +3,7 @@ import copy
 import random
 
 
-class trained_player_queens:
+class trained_player_diamonds:
 
     def __init__(self, name, trained):
         # games = ["tricks", "diamonds", "queens", "king", "jack"]
@@ -32,97 +32,41 @@ class trained_player_queens:
         self.temp = True
         self.game = 'diamonds'
         self.trained = trained
-        self.queens = []
-        self.strong = []
-        self.advantages = []
-        self.state_space = {1: {True: {True: {True:{True:'first with strong vulnerable advantage',False:'first with strong vulnerable disadvantage'},
-                                            False:{True:'first with strong covered advantage',False:'first with strong covered disadvantage'}},
-                                       False:{True:{True:'first with weak vulnerable advantage',False:'first with weak vulnerable disadvantage'},
-                                            False:{True:'first with weak covered advantage',False:'first with weak covered disadvantage'}}},
-                                False:{True: {True:{True:'first without strong vulnerable advantage',False:'first without strong vulnerable disadvantage'},
-                                            False:{True:'first without strong covered advantage',False:'first without strong covered disadvantage'}},
-                                       False:{True:{True:'first without weak vulnerable advantage',False:'first without weak vulnerable disadvantage'},
-                                            False:{True:'first without weak covered advantage',False:'first without weak covered disadvantage'}}}},
-
+        self.legal = False
+        self.strong = True
+        self.state_space = {1: {True: {True: {True: 'first legal strong vulnerable', False: 'first legal strong covered'},
+                                       False: {True: 'first legal weak vulnerable', False: 'first legal weak covered'}},
+                                False: {True: {True: 'first illegal strong vulnerable', False: 'first illegal strong covered'},
+                                        False: {True: 'first illegal weak vulnerable', False: 'first illegal weak covered'}}},
                             2: {True: {0: 'second yes poisnonous', 1: 'second yes possible', 2: 'second yes safe'},
-                                False: {True:{True: {True: {True: 'second no with strong vulnerable advantage',False: 'second no with strong vulnerable disadvantage'},
-                                                     False: {True: 'second no with strong covered advantage',False: 'second no with strong covered disadvantage'}},
-                                                False: {True: {True: 'second no with weak vulnerable advantage', False: 'second with no weak vulnerable disadvantage'},
-                                                        False: {True: 'second no with weak covered advantage',False: 'second with no weak covered disadvantage'}}},
-                                        False:{True: {True: {True: 'second no without strong vulnerable advantage',False: 'second no without strong vulnerable disadvantage'},
-                                                     False: {True: 'second no without strong covered advantage',False: 'second no without strong covered disadvantage'}},
-                                                False: {True: {True: 'second no without weak vulnerable advantage', False: 'second no without weak vulnerable disadvantage'},
-                                                        False: {True: 'second no without weak covered advantage',False: 'second no without weak covered disadvantage'}}}}},
-
+                                False: {True: {True: 'second no strong vulnerable', False: 'second no strong covered'},
+                                        False: {True: 'second no weak vulnerable', False: 'second no weak covered'}}},
                             3: {True: {0: 'third yes poisnonous', 1: 'third yes possible', 2: 'third yes safe'},
-                                False: {True: {True: {True: {True: 'third no with strong vulnerable advantage',False: 'third no with strong vulnerable disadvantage'},
-                                                      False: {True: 'third no with strong covered advantage',False: 'third no with strong covered disadvantage'}},
-                                               False: {True: {True: 'third no with weak vulnerable advantage',False: 'third with no weak vulnerable disadvantage'},
-                                                       False: {True: 'third no with weak covered advantage',False: 'third with no weak covered disadvantage'}}},
-                                        False: {True: {True: {True: 'third no without strong vulnerable advantage',False: 'third no without strong vulnerable disadvantage'},
-                                                       False: {True: 'third no without strong covered advantage',False: 'third no without strong covered disadvantage'}},
-                                                False: {True: {True: 'third no without weak vulnerable advantage', False: 'third no without weak vulnerable disadvantage'},
-                                                        False: {True: 'third no without weak covered advantage',False: 'third no without weak covered disadvantage'}}}}},
-
+                                False: {True: {True: 'third no strong vulnerable', False: 'third no strong covered'},
+                                        False: {True: 'third no weak vulnerable', False: 'third no weak covered'}}},
                             4: {True: {0: 'fourth yes poisnonous', 1: 'fourth yes possible', 2: 'fourth yes safe'},
-                                False: {True: {True: {True: {True: 'third no with strong vulnerable advantage',False: 'third no with strong vulnerable disadvantage'},
-                                                      False: {True: 'third no with strong covered advantage', False: 'third no with strong covered disadvantage'}},
-                                               False: {True: {True: 'third no with weak vulnerable advantage',False: 'third with no weak vulnerable disadvantage'},
-                                                       False: {True: 'third no with weak covered advantage', False: 'third with no weak covered disadvantage'}}},
-                                        False: {True: {True: {True: 'third no without strong vulnerable advantage',False: 'third no without strong vulnerable disadvantage'},
-                                                       False: {True: 'third no without strong covered advantage',False: 'third no without strong covered disadvantage'}},
-                                                False: {True: {True: 'third no without weak vulnerable advantage', False: 'third no without weak vulnerable disadvantage'},
-                                                        False: {True: 'third no without weak covered advantage',False: 'third no without weak covered disadvantage'}}}}}}
+                                False: {True: {True: 'fourth no strong vulnerable', False: 'fourth no strong covered'},
+                                        False: {True: 'fourth no weak vulnerable', False: 'fourth no weak covered'}}}}
 
-
-        self.states_list = ['first with strong vulnerable advantage','first with strong vulnerable disadvantage',
-                            'first with strong covered advantage', 'first with strong covered disadvantage',
-                            'first with weak vulnerable advantage', 'first with weak vulnerable disadvantage',
-                            'first with weak covered advantage', 'first with weak covered disadvantage',
-                            'first without strong vulnerable advantage', 'first without strong vulnerable disadvantage',
-                            'first without strong covered advantage', 'first without strong covered disadvantage',
-                            'first without weak vulnerable advantage', 'first without weak vulnerable disadvantage',
-                            'first without weak covered advantage', 'first without weak covered disadvantage',
-
+        self.state_space_length = 29
+        self.states_list = ['first legal strong vulnerable', 'first legal strong covered', 'first legal weak vulnerable',
+                            'first legal weak covered',
+                            'first illegal strong vulnerable', 'first illegal strong covered', 'first illegal weak vulnerable',
+                            'first illegal weak covered',
                             'second yes poisnonous', 'second yes possible', 'second yes safe',
-                            'second no with strong vulnerable advantage', 'second no with strong vulnerable disadvantage',
-                            'second no with strong covered advantage', 'second no with strong covered disadvantage',
-                            'second no with weak vulnerable advantage', 'second no with weak vulnerable disadvantage',
-                            'second no with weak covered advantage', 'second no with weak covered disadvantage',
-                            'second no without strong vulnerable advantage','second no without strong vulnerable disadvantage',
-                            'second no without strong covered advantage', 'second no without strong covered disadvantage',
-                            'second no without weak vulnerable advantage', 'second no without weak vulnerable disadvantage',
-                            'second no without weak covered advantage', 'second no without weak covered disadvantage',
+                            'second no strong vulnerable',
+                            'second no strong covered', 'second no weak vulnerable', 'second no weak covered',
+                            'third yes poisnonous','third yes possible', 'third yes safe','third no strong vulnerable',
+                            'third no strong covered','third no weak vulnerable', 'third no weak covered',
+                            'fourth yes poisnonous','fourth yes possible','fourth yes safe', 'fourth no strong vulnerable',
+                            'fourth no strong covered','fourth no weak vulnerable', 'fourth no weak covered']
 
-                            'third yes poisnonous', 'third yes possible', 'third yes safe',
-                            'third no with strong vulnerable advantage', 'third no with strong vulnerable disadvantage',
-                            'third no with strong covered advantage', 'third no with strong covered disadvantage',
-                            'third no with weak vulnerable advantage', 'third no with weak vulnerable disadvantage',
-                            'third no with weak covered advantage', 'third no with weak covered disadvantage',
-                            'third no without strong vulnerable advantage','third no without strong vulnerable disadvantage',
-                            'third no without strong covered advantage', 'third no without strong covered disadvantage',
-                            'third no without weak vulnerable advantage', 'third no without weak vulnerable disadvantage',
-                            'third no without weak covered advantage', 'third no without weak covered disadvantage',
-
-                            'fourth yes poisnonous','fourth yes possible','fourth yes safe',
-                            'fourth no with strong vulnerable advantage', 'fourth no with strong vulnerable disadvantage',
-                            'fourth no with strong covered advantage', 'fourth no with strong covered disadvantage',
-                            'fourth no with weak vulnerable advantage', 'fourth no with weak vulnerable disadvantage',
-                            'fourth no with weak covered advantage', 'fourth no with weak covered disadvantage',
-                            'fourth no without strong vulnerable advantage','fourth no without strong vulnerable disadvantage',
-                            'fourth no without strong covered advantage', 'fourth no without strong covered disadvantage',
-                            'fourth no without weak vulnerable advantage', 'fourth no without weak vulnerable disadvantage',
-                            'fourth no without weak covered advantage', 'fourth no without weak covered disadvantage',
-                            ]
-
-        self.state_space_length = len(self.states_list)
         self.action_space_yes = ['low_card', 'mid_card', 'high_card']
-        self.action_space_no = ['queen','strong','vulnerable', 'advantage']
-        self.action_space_first = ['queen low', 'queen mid', 'queen high',
-                                   'storng low', 'strong mid', 'strong high',
+        self.action_space_no = ['diamond', 'vulnerable', 'strong']
+        self.action_space_first = ['diamond low', 'diamond mid', 'diamond high',
                                    'vulnerable low', 'vulnerable mid', 'vulnerable high',
-                                   'advantage low', 'advantage mid', 'advantage high']
-
+                                   'few low', 'few mid', 'few high',
+                                   'lot low', 'lot mid', 'lot high']
         if self.name == 'Motaz':
             self.Q_table = self.create_Q_table()
         self.random_action = 90
@@ -162,7 +106,7 @@ class trained_player_queens:
 
     def remove_cards(self, cards):
 
-        print('cards:      ', cards)
+        #print('cards:      ', cards)
         #print('suits:      ',self.suits_left)
         for i in cards:
             if i in self.players_cards[0]:
@@ -180,21 +124,6 @@ class trained_player_queens:
             # print('index: ',self.suits.index(i[0]))
             if i in self.suits_left_list[self.suits.index(i[0])]:
                 self.suits_left_list[self.suits.index(i[0])].remove(i)
-            if i in self.queens:
-                index = self.queens.index(i)
-                self.queens.remove(i)
-                self.strong.pop(index)
-            if len(self.advantages)>0:
-                for j in range(len(self.advantages)):
-                    if len(self.advantages[j]) >0 and i[0] == self.advantages[j][0][0]:
-                        if i in self.advantages[j]:
-                            self.advantages[j].remove(i)
-                            if len(self.advantages[j]) == 0:
-                                self.advantages.pop(j)
-                            break
-
-
-
 
         # print('suits after: ',self.suits_left)
         # print('players cards:    ',self.players_cards[0])
@@ -229,15 +158,9 @@ class trained_player_queens:
         self.players_cards_expected = copy.deepcopy(self.players_cards)
         #print('expected: ',self.players_cards_expected)
         self.remove_cards(self.hand)
-        self.queens.clear()
-        self.have_queen()
-        for i in range(len(self.queens)):
-            self.strong_queen(self.queens[i])
-            #print('iii')
-            print(self.queens[i],' ',self.strong[i])
-        self.advantages.clear()
-        self.have_advantages()
-
+        if self.trained:
+            self.legal = False
+            self.strong_diamond()
         # checked
 
     def getKey(self, item):
@@ -338,33 +261,25 @@ class trained_player_queens:
                 allowed_cards, match = self.allowed_cards(cards_played[0][1][0], self.hand)
                 action = random.randrange(3)
                 if match:
-                    if self.contains_queen(cards_played):
-                        action = 0
-                    else:
-                        action = self.valid_action_queens(cards_played[0][1][0],cards_played)
-                    card = self.perform_action(cards_played.copy(), allowed_cards, (action, -1), match)
-                    return self.played_card(card)
+                    action = self.valid_action_diamond(cards_played[0][1][0],cards_played)
 
-                else:
-                    queen = random.randrange(2) == 1
-                    if queen and len(self.queens) > 0:
-                        print('hello queens: ', self.queens)
-                        card = self.play_queen()
-                    advantage = random.randrange(2) == 1
-                    if advantage and len(self.advantages) > 0:
-                        print('hello advantage: ', self.advantages)
-                        card = self.play_advantage()
-                    else:
-                        action = random.randrange(3)
-                        card = self.perform_action(cards_played.copy(), self.hand, (action,-1), False)
-                    return self.played_card(card)
-
+                card = self.perform_action(cards_played.copy(), allowed_cards, action, match)
+                return self.played_card(card)
             else:
-                action = [random.randrange(3), random.randrange(3)]
-                card = self.perform_action(cards_played.copy(), self.hand, action, False)
+                # always plays the highest card
+                #print('analyse please')
+                diamond = random.randrange(2)==1
+                if diamond:
+                    #print('hello diamond')
+                    allowed_cards,b = self.allowed_cards('diamond',self.hand)
+                    #print('allowed: cards: ',allowed_cards)
+                    card = self.perform_action(cards_played.copy(),allowed_cards ,2,True)
+                else:
+                    action = [random.randrange(3), random.randrange(3)]
+                    card = self.perform_action(cards_played.copy(), self.hand, action, False)
                 return self.played_card(card)
 
-    # need to check why ai players do not play the max card when they play a different suit
+    # need some check why ai players do not play the max card when they play a different suit
 
     def valid_actions(self, allowed_cards, highest_card):
         #print('*************** valid actions *************')
@@ -379,54 +294,16 @@ class trained_player_queens:
             return [1, 2], True
         return [0, 1, 2], True
 
-    def valid_action_queens(self,suit,cards_played):
+    def valid_action_diamond(self,suit,cards_played):
         counter = 0
-        if len(cards_played)==3:
-            return 2
         for i in cards_played:
             if i[1][0]== suit:
                 counter+=1
         if len(self.suits_left(suit))-counter<6:
             return 0
-        return 1
-
-    def contains_queen(self,cards_played):
-        for i in cards_played:
-            if i[1][1] == 'q':
-                return True
-        return False
+        return 2
 
 
-    def have_queen(self):
-        #print('check for queen: ',self.hand)
-
-        for i in self.hand:
-            if i[1] == 'q':
-                self.queens.append(i)
-        #print(self.queens)
-
-    def play_queen(self):
-
-        for i in range(1,len(self.strong)):
-            if not self.strong[i]:
-                return self.queens[i]
-        return self.queens[0]
-
-    def play_advantage(self):
-        lenght = len(self.advantages[0])
-        card = self.advantages[0][-1]
-        for i in range(1,len(self.advantages)):
-            if len(self.advantages[i])<lenght and len(self.advantages[i])>0:
-                lenght = len(self.advantages[i])
-                card = self.advantages[i][-1]
-        return card
-
-    def have_advantages(self):
-        suits = self.extract_suits(self.hand)
-        for i in self.suits:
-            if type(suits.get(i)) == list:
-                if len(suits.get(i)) <3:
-                    self.advantages.append(suits.get(i))
 
     def update_score(self, trick):
 
@@ -453,7 +330,6 @@ class trained_player_queens:
     def create_Q_table(self):
 
         table = []
-        '''
         for i in range((self.state_space_length)):
             state = []
             if 'legal' in self.states_list[i]:
@@ -465,9 +341,7 @@ class trained_player_queens:
             for j in range(len(actions)):
                 state.append(0)
             table.append(state)
-            '''
         return table
-
 
     def min_card(self, allowed_cards, first, max):
         card_obj = cards()
@@ -596,6 +470,10 @@ class trained_player_queens:
         else :
             self.analyse_trick(previous_trick,trick_winner,suit,True)
 
+
+
+
+
     def analyse_trick(self, previous_trick, trick_winner,suit,safe):
 
         new_cards = cards()
@@ -716,30 +594,68 @@ class trained_player_queens:
                 return self.choose_suit(cards, action, suits_count)
         # checked
 
-    def pick_queen(self,cards):
-        for i in cards:
-            if i[1] == 'q':
-                return i
-
     # require an alogritm to deal with the case of only one card left in a suit and you have the rest line 585
-    def perform_action_first(self, suits_eval, allowed_cards):
+    def perform_action_first(self, cards_played, allowed_cards):
         print('allowed cards fir: ', allowed_cards)
-        subaction = random.randrange(3)
-        update,action,card = self.perform_action_no(allowed_cards,suits_eval,subaction)
-        print('card: ',card)
-        print('subaction: ',subaction)
-        if update:
-            print('action decided: ',self.action_space_first[action*3+subaction])
+        actions = []
+        a, evaluation = self.suits_evaluation()
+        print('eval fir: ', evaluation)
+        if type(evaluation.get('free'))!=None:
+            return False,0,allowed_cards[0]
+        suits = self.extract_suits(allowed_cards)
+        diamond_suit = suits.get('diamond')
+        vulnerable_suit = []
+        strong_suit = []
+        found_vulnerable = True
+        action=2
+        index_short = 0
+        index_long = 1
+        for i in self.suits:
+            if type(evaluation.get(i)) == bool and i != 'diamond' and found_vulnerable and evaluation.get(i) :
+                vulnerable_suit = suits.get(i)
+                print('vuln: ', vulnerable_suit)
+                actions.append(1)
+                found_vulnerable = False
+            if type(evaluation.get(i)) == bool and i != 'diamond' and not evaluation.get(i):
+                strong_suit.append(suits.get(i))
+                print('stro: ', strong_suit)
+                actions.append(action)
+                action+=1
+        if len(strong_suit) == 2:
+            if len(strong_suit[0])>len(strong_suit[1]):
+                index_long = 0
+                index_short = 1
 
-        return update,action*3+subaction,card
 
 
 
+        if type(diamond_suit) == list:
+            actions.append(0)
+
+        print('actions fir: ', actions)
+        action = actions[random.randrange(len(actions))]
+        print('action: ', action)
+
+        suit_to_play = diamond_suit
+        if action == 1:
+            suit_to_play = vulnerable_suit
+        elif action == 2:
+            suit_to_play = strong_suit[index_short]
+        elif action == 3:
+            suit_to_play = strong_suit[index_long]
+
+        print('suit to play: ', suit_to_play)
+        rank_action = random.randrange(3)
+        print('rank action: ',action*3+rank_action)
+        print('rank action: ',self.action_space_first[action*3+rank_action])
+
+
+
+        return len(actions) > 1, action*3+rank_action, self.perform_action(cards_played, suit_to_play, rank_action, True)
 
         # checked might require considering the case of performing different action than desired
 
     def perform_action(self, cards_played, allowed_cards, action, match):
-        card_obj = cards()
         #print('cards played: ',cards_played)
         #print('allowed: ',allowed_cards,' action: ',action,' match: ',match)
         #print('action: ',action,'   match: ',match)
@@ -754,27 +670,10 @@ class trained_player_queens:
             else:
                 allowed_cards = self.choose_suit(allowed_cards, action, suits_count)
                 print('original action: ',action,'suits count: ',suits_count)
-                if type(action) == tuple:
-                    card = self.pick_queen(allowed_cards)
-                    if card != None:
-                        return card
                 action = 2
             print('cards played: ',cards_played)
             print('allowed: ',allowed_cards)
             print('action:       ',action,'   match: ',match)
-        elif type(action) == tuple:
-            action = action[0]
-            if action == 1:
-                print('check here',allowed_cards)
-                for i in range(1,len(allowed_cards)):
-                    if card_obj.get_rank(allowed_cards[-1][1])>10:
-                        allowed_cards.pop(-1)
-                    else:
-                        break
-                action = 2
-
-
-
         if action == 0:
             if len(cards_played) == 0:
                 return self.min_card(allowed_cards, True, 0)
@@ -786,110 +685,49 @@ class trained_player_queens:
             # print('midddd')
             return self.mid_card(allowed_cards, False, self.highest_card_played(cards_played))
         else:
-            print('allowed: ',allowed_cards)
+            #print('allowed: ',allowed_cards)
             print('the max card: ',self.max_card(allowed_cards))
             return self.max_card(allowed_cards)
         # checked (mid need to be corrected)
 
-    def decide_queen(self,suits_dic):
-        print('queens: ',self.queens)
-        print('suits dic: ',suits_dic)
-        length = len(suits_dic.get(self.queens[0][0]))
-        strong = self.strong[0]
-        queen = self.queens[0]
-        if not strong:
-            return self.queens[0]
-        for i in range(1,len(self.queens)):
-            if self.strong[i] != strong:
-                return self.queens[i]
-            elif len(suits_dic.get(self.queens[i][0]))<length:
-                length = len(suits_dic.get(self.queens[i][0]))
-                queen = self.queens[i]
-        return queen
 
-    def decide_card(self,suits_to_decide,action):
-        print('suits to decide: ',suits_to_decide)
-        suit = suits_to_decide[0]
-        length = len(suits_to_decide[0])
-        for i in range(1,len(suits_to_decide)):
-            if len(suits_to_decide[i])<length and len(suits_to_decide[i])>0:
-                print('suit to decide loop: ',suits_to_decide[i],'  length: ',length)
-                suit = suits_to_decide[i]
-                length = len(suits_to_decide[i])
-
-        if (suit[0][0],'q') in suit and action == 2:
-            print('returned card: ', suit[-1])
-            return (suit[0][0],'q')
-
-        if action == 0:
-            print('returned card: ', self.min_card(suit,True,0))
-            return self.min_card(suit,True,0)
-        if action == 1:
-            print('returned card: ', self.mid_card(suit,True,0))
-            return self.mid_card(suit,True,0)
-        if action == 2:
-            print('returned card: ',self.max_card(suit))
-            return self.max_card(suit)
-
-    def perform_action_no(self, allowed_cards,suits_eval,action):
+    def perform_action_no(self, allowed_cards):
         print('allowed cards no: ',allowed_cards)
-        print('suits eval: ',suits_eval)
-        if suits_eval.get('free')!= None:
-            return False,-1,allowed_cards[0]
         actions = []
-        cards_to_play= []
-        suits_dic = self.extract_suits(allowed_cards)
-        vulnerabel_suits = []
-        strong_suits = []
-        if len(self.queens)>0:
-            cards_to_play.append(self.decide_queen(suits_dic))
-            #print('returned queen: ',cards_to_play[-1])
-            actions.append(0)
-        else:
-            cards_to_play.append([])
-
-        #print('cards to play: ',cards_to_play)
+        a, evaluation = self.suits_evaluation()
+        print('eval no: ', evaluation)
+        if type(evaluation.get('free'))!=None:
+            return False,0,allowed_cards[0]
+        suits = self.extract_suits(allowed_cards)
+        diamond_suit = suits.get('diamond')
+        vulnerable_suit = []
+        strong_suit = []
+        found_vulnerable = True
         for i in self.suits:
-            if suits_eval.get(i) == False:
-                vulnerabel_suits.append(suits_dic.get(i))
-            if suits_eval.get(i) == True:
-                vulnerabel_suits.append(suits_dic.get(i))
-        if len(strong_suits)>0:
-            cards_to_play.append(self.decide_card(strong_suits,action))
-            actions.append(1)
-        else:
-            cards_to_play.append([])
-        #print('cards to play: ', cards_to_play)
-        if len(vulnerabel_suits)>0:
-            cards_to_play.append(self.decide_card(vulnerabel_suits,action))
-            actions.append(2)
-        else:
-            cards_to_play.append([])
-        if len(self.advantages)>0:
-            advantage = False
-            for i in self.advantages:
-                if len(i) > 0:
-                    advantage = True
-                    break
-            if advantage:
-                actions.append(3)
-                cards_to_play.append(self.decide_card(self.advantages,action))
-            else:
-                cards_to_play.append([])
-        else:
-            cards_to_play.append([])
+            if type(evaluation.get(i)) == bool and evaluation.get(i) and i != 'diamond' and found_vulnerable:
+                vulnerable_suit = suits.get(i)
+                print('vuln: ', vulnerable_suit)
+                actions.append(1)
+                found_vulnerable = False
+            if type(evaluation.get(i)) == bool and not evaluation.get(i):
+                strong_suit.append(suits.get(i))
+                print('stro: ', strong_suit)
+                actions.append(2)
 
+        if type(diamond_suit) == list:
+            actions.append(0)
 
-        #print('cards to play: ', cards_to_play)
+        print('actions no: ', actions)
         action = actions[random.randrange(len(actions))]
-        #print('actions: ', actions)
-        #print('len action :',len(actions))
-        print('action: ',action)
-        print('to play: ',cards_to_play)
-        print('decided action: ',self.action_space_no[action])
-        print('played: ',cards_to_play[action])
+        print('action: ', action)
+        suit_to_play = diamond_suit
+        if action == 1:
+            suit_to_play = vulnerable_suit
+        elif action == 2:
+            suit_to_play = strong_suit[0]
 
-        return len(actions)==1,action,cards_to_play[action]
+        #print('suit to play: ', suit_to_play)
+        return len(actions) > 1, action, suit_to_play[-1]
 
 
     def extract_suits(self, cards):
@@ -926,6 +764,7 @@ class trained_player_queens:
         return True
 
     def evaluate_suit(self, my_cards):
+        #print('####### evalutae ##########')
         suit = my_cards[0][0]
         number_of_my_cards = len(my_cards)
         temp = []
@@ -933,7 +772,7 @@ class trained_player_queens:
         #print(self.players_cards_expected)
         for i in self.players_cards_expected:
             player_suit = self.extract_suits(i).get(suit)
-            # print('type of suit: ',player_suit)
+            #print('type of suit: ',player_suit)
             if type(player_suit) == list:
                 temp.append(len(player_suit))
                 if temp[-1] > 0:
@@ -942,23 +781,20 @@ class trained_player_queens:
         number_of_players_cards = min(temp)
         temp = [number_of_my_cards, number_of_players_cards]
         number_of_cards_to_check = min(temp)
-        '''
-        print('temp: ',temp)
-        print('number: ',number_of_cards_to_check)
-        print('players cards expected: ',number_of_players_cards)
-        print('my cards: ', my_cards)
-'''
+        # print('temp: ',temp)
+        # print('number: ',number_of_cards_to_check)
+        # print('players cards expected: ',number_of_players_cards)
+        # print('my cards: ', my_cards)
+
         card_obj = cards()
         strong = True
 
         cards_left = self.suits_left(suit)
-        self.extract_suits(my_cards).get(suit)
-        '''
-        print('cards to check: ',my_cards)
-        print('cards to compare: ',cards_left)
-        print('cards checke: ',number_of_cards_to_check)
-        print('limit: ',limit)
-        '''
+        # self.extract_suits(my_cards).get(suit)
+        # print('cards to check: ',my_cards)
+        # print('cards to compare: ',cards_left)
+        # print('cards checke: ',number_of_cards_to_check)
+        # print('limit: ',limit)
         found = False
         for i in range(number_of_cards_to_check):
             my_rank = card_obj.get_rank(my_cards[i][1])
@@ -974,7 +810,7 @@ class trained_player_queens:
             if not found:
                 strong = found
                 break
-        #print('strong: ',strong)
+        # print('strong: ',strong)
 
         return (my_cards[0][0], strong)
 
@@ -989,145 +825,39 @@ class trained_player_queens:
             return True
         return False
 
-    def evaluate_queen(self,suit,my_cards,rank):
-        #print('####### evalutae queen ##########')
-        suit_left = self.suits_left(suit)
-        number_of_my_cards = len(my_cards)
-        temp = []
-        limit = 0
-        print(self.players_cards_expected)
-        for i in self.players_cards_expected:
-            player_suit = self.extract_suits(i).get(suit)
-            #print('type of suit: ',player_suit)
-            if type(player_suit) == list:
-                temp.append(len(player_suit))
-                if temp[-1] > 0:
-                    limit += 1
-
-        number_of_players_cards = min(temp)
-        temp = [number_of_my_cards, number_of_players_cards]
-        number_of_cards_to_check = len(my_cards)
-        '''
-        print('temp: ',temp)
-        print('number: ',number_of_cards_to_check)
-        print('players cards expected: ',number_of_players_cards)
-        print('my cards: ', my_cards)
-'''
-        card_obj = cards()
-        strong = True
-
-        cards_left = self.suits_left(suit)
-        self.extract_suits(my_cards).get(suit)
-        '''
-        print('cards to check: ',my_cards)
-        print('cards to compare: ',cards_left)
-        print('cards checke: ',number_of_cards_to_check)
-        print('limit: ',limit)
-'''
-        found = False
-
-        counter = 0
-        stop = True
-        for i in range(number_of_cards_to_check):
-            for j in range(limit):
-                if i * limit + j < len(cards_left):
-                    counter += 1
-                    rank_to_compare = card_obj.get_rank(cards_left[i * limit + j][1])
-                    #print('rank to compare: ',rank_to_compare)
-                    if rank_to_compare > rank:
-                        found = True
-                        break
-                    if (counter == number_of_players_cards  or counter == 6) and stop:
-                        limit -=1
-                        stop = False
-                else:
-                    found = True
-                    break
-        if not found:
-            strong = found
-        #print('strong: ',strong)
-        if not stop:
-            limit +=1
-
-        return my_cards[0][0], strong,limit
-
-    def strong_queen(self,queen):
-        print('strong queen check')
-        suit = queen[0]
-        if self.free_suit(suit):
-            print('free ',suit)
+    def strong_diamond(self):
+        if self.free_suit('diamond'):
+            print('free diamond')
             return False
-        suit_card = self.extract_suits(self.hand).get(suit)
+        suit = self.extract_suits(self.hand).get('diamond')
         #print(type(suit),' suit: ',suit)
-        if type(suit_card)==list:
-            a, strong ,li= (self.evaluate_queen(suit,suit_card,11))
-            #print(strong)
-            self.strong.append(strong)
+        if type(suit)==list:
+            a, strong = (self.evaluate_suit(suit))
+            print(strong)
+            self.strong = strong
         else:
-            self.strong.append([])
+            self.strong = True
         #self.extract_suits()
 
-    def queen_played(self,suit):
-        suit_left = self.suits_left(suit)
-        return not (suit,'q') in suit_left
-
-    def suits_evaluation_queen(self):
-        card_obj = cards()
+    def suits_evaluation(self):
         evaluation = {}
-        print(self.queens)
-        print(self.strong)
-        print('queen eval: ')
         my_cards = self.extract_suits(self.hand)
         vulnerable = False
-        eval = True
-        #print('my cardss: ',my_cards)
+        print('my cardss: ',my_cards)
         for i in self.suits:
-            #print('evaluation: ',evaluation)
-            #print()
             if not self.free_suit(i):
-                suit_card = my_cards.get(i)
-                #print('suit: ',suit_card)
-                if type(suit_card) == list:
-                    eval = True
-                    rank = card_obj.get_rank(suit_card[-1][1])
-                    #print('rank: ',rank)
-                    limit = 3
-
-                    if rank >10:
-                        a, eval, limit = self.evaluate_queen(suit_card[0][0], suit_card, rank)
-                        print('eval: ',eval)
-                    #print('lowest: ', (self.suits_left(i)), '  my lowest: ',my_cards.get(i)[0])
-                    if not eval or ((limit-1<len(self.suits_left(i)))and(card_obj.get_rank(self.suits_left(i)[limit-1][1])<card_obj.get_rank(my_cards.get(i)[0][1]))):
-                        eval = False
-
+                suit = my_cards.get(i)
+                print('suit: ',suit)
+                if type(suit) == list:
+                    a, eval=self.evaluate_suit(suit)
                     if not eval:
                         vulnerable = True
                     evaluation[i]=(eval)
         if len(evaluation)==0:
             evaluation['free']=my_cards
             #print('hey')
-        print('eval: ',evaluation)
+        #print('eval: ',evaluation)
         return vulnerable,evaluation
-
-    def suits_evaluation(self):
-        evaluation = {}
-        my_cards = self.extract_suits(self.hand)
-        vulnerable = False
-        #print('my cardss: ', my_cards)
-        for i in self.suits:
-            if not self.free_suit(i):
-                suit = my_cards.get(i)
-                #print('suit: ', suit)
-                if type(suit) == list:
-                    a, eval = self.evaluate_suit(suit)
-                    if not eval:
-                        vulnerable = True
-                    evaluation[i] = (eval)
-        if len(evaluation) == 0:
-            evaluation['free'] = my_cards
-            # print('hey')
-        print('eval: ',evaluation)
-        return vulnerable, evaluation
 
     def state_of_the_game(self, tricks_left):
         return int(tricks_left / 5.25)
@@ -1140,29 +870,30 @@ class trained_player_queens:
                 counter+=1
         return cards,counter
 
+
     def potential_different(self,suit,cards,cards_played):
 
-        #print(suit, '  pot cards: ',cards)
+        print(suit, '  pot cards: ',cards)
         cards, cards_removed= self.analyse_different(cards_played,cards)
-        #print(suit, '  pot cards: ', cards)
+        print(suit, '  pot cards: ', cards)
         suit_player = self.extract_suits(cards).get(suit)
-        #print('cards removed: ',cards_removed)
-        #print('suit player: ',suit_player)
+        print('cards removed: ',cards_removed)
+        print('suit player: ',suit_player)
         if type(suit_player)!=list:
             return True
         suit_left = len(suit_player)
-        #print('left suit: ',suit_left)
+        print('left suit: ',suit_left)
         if suit_left-cards_removed<6:
             return True
         return (len(self.suits_left(suit))-cards_removed)-suit_left >3
 
-    def possible_queen(self,cards_played):
+    def possible_diamond(self,cards_played):
         #print('possible diamond')
         #print(cards_played)
         cards = self.extract_cards(cards_played)
         print(cards)
         for i in cards:
-            if i[1]=='q':
+            if i[0]=='diamond':
                 return 0
         players_left = 4-(len(cards_played)+1)
         for i in range(players_left):
@@ -1172,43 +903,21 @@ class trained_player_queens:
 
         return 2
 
-
-    def decide_advantage(self):
-        if len(self.advantages)>0:
-            for i in self.advantages:
-                if len(i)>0:
-                    return True, i
-        return False, []
-
-
-
     def current_state(self, cards_played, allowed_cards, match):
 
-        print('my cards state',self.hand)
-        vulnerable, suits_dic = self.suits_evaluation_queen()
-        advantage, cards = self.decide_advantage()
-        print('cards played: ', cards_played)
-        print(len(allowed_cards), 'allwed cards: ', allowed_cards)
-        print('vul: ',vulnerable)
-        print('suit dic: ',suits_dic)
-        print('cards: ',cards)
-        strong = False not in self.strong
-        queen = True
-        if len(self.queens) == 0:
-            queen = False
-            strong, suits_dic = self.suits_evaluation()
-
+        #print('cards played: ', cards_played)
+        #print(len(allowed_cards),'allwed cards: ',allowed_cards)
+        vulnerable, suits_dic = self.suits_evaluation()
         if len(cards_played) == 0:
-
-            print('que: ',queen,'  str: ',strong,'  vul: ',vulnerable,' advantage: ',advantage)
-            return self.state_space.get(1).get(queen).get(strong).get(vulnerable).get(advantage),suits_dic
+            #print('leg: ',self.legal,'  str: ',self.strong,'  vul: ',vulnerable)
+            return self.state_space.get(1).get(self.legal).get(self.strong).get(vulnerable)
 
         if match:
-            print('mat: ', match, '  str: ', self.possible_queen(cards_played))
-            return self.state_space.get(len(cards_played) + 1).get(match).get(self.possible_queen(cards_played)),suits_dic
+            #print('mat: ', match, '  str: ', self.possible_diamond(cards_played))
+            return self.state_space.get(len(cards_played) + 1).get(match).get(self.possible_diamond(cards_played))
 
-        print('mat: ', match, '  str: ', strong, '  vul: ', vulnerable,' advantage: ',advantage)
-        return self.state_space.get(len(cards_played) + 1).get(match).get(queen).get(strong).get(vulnerable).get(advantage),suits_dic
+        #print('mat: ', match, '  str: ', self.strong, '  vul: ', vulnerable)
+        return self.state_space.get(len(cards_played) + 1).get(match).get(self.strong).get(vulnerable)
 
     # checked
 
@@ -1236,12 +945,12 @@ class trained_player_queens:
     # check if I have a choice or I am forced to play a card
     def Q_table_decision(self, cards_played, allowed_cards, match):
         update_Qtable = True
-        state,suits_eval = self.current_state(cards_played, allowed_cards, match)
+        state = self.current_state(cards_played, allowed_cards, match)
         if (random.random() < self.random_action):
             print('state: ',state)
             if state[0:5] == 'first':
                 # print('yes it is first: ',action)
-                update_Qtable,action, card = self.perform_action_first(suits_eval,self.hand)
+                update_Qtable,action, card = self.perform_action_first(cards_played,self.hand)
                 self.random_action -= 0.1
                 print('action: ', action)
                 update_Qtable = True
@@ -1266,8 +975,7 @@ class trained_player_queens:
                 self.random_action -= 0.1
                 return card
             else:
-                #'queen', 'vulnerable', 'advantage', 'disadvantage'
-                update_Qtable,action,card = self.perform_action_no(allowed_cards,suits_eval,2)
+                update_Qtable,action,card = self.perform_action_no(allowed_cards)
                 self.random_action -= 0.1
                 return card
 
@@ -1293,7 +1001,6 @@ class trained_player_queens:
             card = self.perform_action(cards_played, allowed_cards, action, match)
             print('best action: ', action)
             return card
-
 
     def add_trick(self, trick, plays, card_by_card):
         tricks = []
@@ -1730,7 +1437,7 @@ class trained_player_queens:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("queens tricks.txt", "r")
+        f = open("diamonds tables.txt", "r")
         content = self.preprocess(f.readlines())
         # print('finished preprocessing')
         # print('after',content)
@@ -1753,10 +1460,10 @@ class trained_player_queens:
 
         print('########## content list ############# ', self.Q_table)
         new_table = self.read_Q_table().copy()
-        self.merge_table(new_table)
+        #self.merge_table(new_table)
         print('########## content list ############# ', self.Q_table)
 
-        f = open("Q tables.txt", "w")
+        f = open("diamonds tables.txt", "w")
         f.write(first_line)
         for i in range(len(self.states_list)):
             line_to_write = self.states_list[i] + ': ' + self.rewards_to_string(self.Q_table[i])

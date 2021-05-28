@@ -1,5 +1,5 @@
 from cards import cards
-from tricks_player import tricks_player
+from trained_player_tricks import trained_player_tricks
 import random
 
 #rename to trianing tricks
@@ -10,10 +10,10 @@ deck = cards()
 
 # def __init__(self, name, score, hand, game,human):
 
-player = tricks_player('Motaz', False)
-ai1 = tricks_player('ai1', False)
-ai2 = tricks_player('ai2', False)
-ai3 = tricks_player('ai3', False)
+player = trained_player_tricks('Motaz', False)
+ai1 = trained_player_tricks('ai1', False)
+ai2 = trained_player_tricks('ai2', False)
+ai3 = trained_player_tricks('ai3', False)
 players = [player, ai1, ai2, ai3]
 temp_players = [player, ai1, ai2, ai3]
 players_order = players
@@ -25,8 +25,8 @@ new_subgame = True
 new_subgame = True
 your_kingdom = True
 sub_game_finished = False
-games_left = 1
-sub_games_left = 1
+games_left = 100
+sub_games_left = 100
 scores = [0, 0, 0, 0]
 subscores = [0, 0, 0, 0]
 game = 'diamond'
