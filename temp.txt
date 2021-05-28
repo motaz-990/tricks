@@ -1,1 +1,7 @@
-omar:: 0P(3), 1M(1), 2T(0), 3O(1), dr:1
+hello:: 0P(1), 1M(1), 2T(1), 3O(1), dr:0 
+ddd:: 0P(0), 1M(3), 2T(0), 3O(1), dr:0 
+no errors:: 0P(1), 1M(3), 2T(1), 3O(0), dr:1
+hi:: 0P(2), 1M(0), 2T(1), 3O(2), dr:1
+do not ask about my name:: 0P(1), 1M(1), 2T(1), 3O(1), dr:0 
+ss:: 0P(1), 1M(2), 2T(2), 3O(0), dr:1
+sure:: 0P(1), 1M(2), 2T(0), 3O(1), dr:0 

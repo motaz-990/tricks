@@ -111,7 +111,7 @@ def update_winner(name,winner,file,winner_name,draw):
             #print('original_line: ',original_line)
             #print('winner: ',type(winner))
             if int(winner) == 0:
-                print('hellllo')
+                #print('hellllo')
                 name = 'Player'
                 look_for = winner +name[0]
             else:
@@ -129,9 +129,9 @@ def update_winner(name,winner,file,winner_name,draw):
             content[i] = first_part+str(updated_wins)+original_line[len(wins):]
             if draw:
                 draws = content[i][content[i].index('dr:')+3:]
-                print('check: ',draws)
+                #print('check: ',draws)
                 draws = str(int(draws)+1)
-                content[i] = content[i][:content[i].index('dr:')+3]+draws
+                content[i] = content[i][:content[i].index('dr:')+3]+draws+'\n'
 
         line_to_write+= content[i]
     #print(line_to_write)
@@ -398,6 +398,7 @@ while not end_game:
         winner = players[scores.index(max(scores))].name
         print('the winner is: ', winner)
         print('Thanks for playing the game!!!!')
+
 
 
 

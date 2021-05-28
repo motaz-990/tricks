@@ -49,7 +49,7 @@ class player_jack:
         # block at the end
         self.states_list = ['worst high',  # 'worst block','worst high block',
 
-                            'worst bad', 'worst bad high ',  # 'worst bad block','worst bad high block',
+                            'worst bad', 'worst bad high',  # 'worst bad block','worst bad high block',
                             'worst bad good', 'worst bad good high',
                             # 'worst bad good block', 'worst bad good high block',
                             'worst bad best', 'worst bad best high',
