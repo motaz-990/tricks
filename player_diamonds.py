@@ -1049,7 +1049,7 @@ class player_diamonds:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("diamonds tables.txt", "r")
+        f = open("diamonds tablesF.txt", "r")
         content = self.preprocess(f.readlines())
         #print('finished preprocessing')
         #print('after',content)

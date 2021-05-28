@@ -963,7 +963,7 @@ class player_jack:
     def read_Q_table(self):
         # print('read table')
         # print()
-        f = open("jacks table.txt", "r")
+        f = open("jacks tableF.txt", "r")
         content = self.preprocess(f.readlines())
         # print('finished preprocessing')
         # print('after',content)
